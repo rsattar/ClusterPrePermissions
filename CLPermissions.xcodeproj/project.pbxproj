@@ -19,6 +19,7 @@
 		65C599E518F35A4600AE202C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65C599CD18F35A4500AE202C /* UIKit.framework */; };
 		65C599ED18F35A4600AE202C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 65C599EB18F35A4600AE202C /* InfoPlist.strings */; };
 		65C599EF18F35A4600AE202C /* CLPermissionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 65C599EE18F35A4600AE202C /* CLPermissionsTests.m */; };
+		65C599FB18F35A6F00AE202C /* CLPermissions.m in Sources */ = {isa = PBXBuildFile; fileRef = 65C599FA18F35A6F00AE202C /* CLPermissions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +49,8 @@
 		65C599EA18F35A4600AE202C /* CLPermissionsTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CLPermissionsTests-Info.plist"; sourceTree = "<group>"; };
 		65C599EC18F35A4600AE202C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		65C599EE18F35A4600AE202C /* CLPermissionsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLPermissionsTests.m; sourceTree = "<group>"; };
+		65C599F918F35A6F00AE202C /* CLPermissions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLPermissions.h; path = CLPermissions/CLPermissions/CLPermissions.h; sourceTree = "<group>"; };
+		65C599FA18F35A6F00AE202C /* CLPermissions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CLPermissions.m; path = CLPermissions/CLPermissions/CLPermissions.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +80,7 @@
 		65C599BD18F35A4500AE202C = {
 			isa = PBXGroup;
 			children = (
+				65C599F818F35A5100AE202C /* CLPermissions */,
 				65C599CF18F35A4500AE202C /* CLPermissions */,
 				65C599E818F35A4600AE202C /* CLPermissionsTests */,
 				65C599C818F35A4500AE202C /* Frameworks */,
@@ -142,6 +146,15 @@
 				65C599EB18F35A4600AE202C /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		65C599F818F35A5100AE202C /* CLPermissions */ = {
+			isa = PBXGroup;
+			children = (
+				65C599F918F35A6F00AE202C /* CLPermissions.h */,
+				65C599FA18F35A6F00AE202C /* CLPermissions.m */,
+			);
+			name = CLPermissions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -240,6 +253,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65C599FB18F35A6F00AE202C /* CLPermissions.m in Sources */,
 				65C599D618F35A4500AE202C /* main.m in Sources */,
 				65C599DA18F35A4500AE202C /* CLAppDelegate.m in Sources */,
 			);
