@@ -155,7 +155,9 @@ static CLPermissions *__sharedInstance;
     CFErrorRef error = nil;
     ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(nil, &error);
     ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
-        [self fireContactPermissionCompletionHandler];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self fireContactPermissionCompletionHandler];
+        });
     });
 }
 
