@@ -41,34 +41,36 @@
 
 - (IBAction)onPhotoPermissionsButtonTapped:(id)sender
 {
-    [[ClusterPrePermissions sharedPermissions] requestPhotoPermissionsIfNeededWithRequestTitle:nil
-                                                                               message:@"We'll never upload without your permission"
-                                                                       denyButtonTitle:nil
-                                                                      grantButtonTitle:nil
-                                                                     completionHandler:^(BOOL hasPermission,
-                                                                                         ClusterDialogResult userDialogResult,
-                                                                                         ClusterDialogResult systemDialogResult) {
-                                                                         [self updateResultLabel:self.photoPermissionResultLabel
-                                                                                  withPermission:hasPermission
-                                                                                userDialogResult:userDialogResult
-                                                                              systemDialogResult:systemDialogResult];
-                                                                     }];
+    ClusterPrePermissions *permissions = [ClusterPrePermissions sharedPermissions];
+    [permissions showPhotoPermissionsWithTitle:@"Access your photos?"
+                                       message:@"Your message here"
+                               denyButtonTitle:@"Not Now"
+                              grantButtonTitle:@"Give Access"
+                             completionHandler:^(BOOL hasPermission,
+                                                 ClusterDialogResult userDialogResult,
+                                                 ClusterDialogResult systemDialogResult) {
+                                 [self updateResultLabel:self.photoPermissionResultLabel
+                                          withPermission:hasPermission
+                                        userDialogResult:userDialogResult
+                                      systemDialogResult:systemDialogResult];
+                             }];
 }
 
 - (IBAction)onContactsButtonPermissionTapped:(id)sender
 {
-    [[ClusterPrePermissions sharedPermissions] requestContactsPermissionsIfNeededWithRequestTitle:nil
-                                                                                  message:@"It makes inviting friends easier"
-                                                                          denyButtonTitle:nil
-                                                                         grantButtonTitle:nil
-                                                                        completionHandler:^(BOOL hasPermission,
-                                                                                            ClusterDialogResult userDialogResult,
-                                                                                            ClusterDialogResult systemDialogResult) {
-                                                                            [self updateResultLabel:self.contactsPermissionResultLabel
-                                                                                     withPermission:hasPermission
-                                                                                   userDialogResult:userDialogResult
-                                                                                 systemDialogResult:systemDialogResult];
-                                                                        }];
+    ClusterPrePermissions *permissions = [ClusterPrePermissions sharedPermissions];
+    [permissions showContactsPermissionsWithTitle:@"Access your contacts?"
+                                          message:@"Your message here"
+                                  denyButtonTitle:@"Not Now"
+                                 grantButtonTitle:@"Give Access"
+                                completionHandler:^(BOOL hasPermission,
+                                                    ClusterDialogResult userDialogResult,
+                                                    ClusterDialogResult systemDialogResult) {
+                                    [self updateResultLabel:self.contactsPermissionResultLabel
+                                             withPermission:hasPermission
+                                           userDialogResult:userDialogResult
+                                         systemDialogResult:systemDialogResult];
+                                }];
 }
 
 - (void) updateResultLabel:(UILabel *)resultLabel

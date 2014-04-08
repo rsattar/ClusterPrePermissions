@@ -37,12 +37,11 @@ static ClusterPrePermissions *__sharedInstance;
 
 #pragma mark - Photo Permissions Help
 
-
-- (void) requestPhotoPermissionsIfNeededWithRequestTitle:(NSString *)requestTitle
-                                                 message:(NSString *)message
-                                         denyButtonTitle:(NSString *)denyButtonTitle
-                                        grantButtonTitle:(NSString *)grantButtonTitle
-                                       completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+- (void) showPhotoPermissionsWithTitle:(NSString *)requestTitle
+                               message:(NSString *)message
+                       denyButtonTitle:(NSString *)denyButtonTitle
+                      grantButtonTitle:(NSString *)grantButtonTitle
+                     completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
     if (requestTitle.length == 0) {
         requestTitle = @"Access Photos?";
@@ -116,11 +115,11 @@ static ClusterPrePermissions *__sharedInstance;
 #pragma mark - Contact Permissions Help
 
 
-- (void) requestContactsPermissionsIfNeededWithRequestTitle:(NSString *)requestTitle
-                                                    message:(NSString *)message
-                                            denyButtonTitle:(NSString *)denyButtonTitle
-                                           grantButtonTitle:(NSString *)grantButtonTitle
-                                          completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+- (void) showContactsPermissionsWithTitle:(NSString *)requestTitle
+                                  message:(NSString *)message
+                          denyButtonTitle:(NSString *)denyButtonTitle
+                         grantButtonTitle:(NSString *)grantButtonTitle
+                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
     if (requestTitle.length == 0) {
         requestTitle = @"Access Contacts?";

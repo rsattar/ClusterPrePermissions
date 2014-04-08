@@ -45,15 +45,15 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
 
 + (instancetype) sharedPermissions;
 
-- (void) requestPhotoPermissionsIfNeededWithRequestTitle:(NSString *)requestTitle
-                                                 message:(NSString *)message
-                                         denyButtonTitle:(NSString *)denyButtonTitle
-                                        grantButtonTitle:(NSString *)grantButtonTitle
-                                       completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+- (void) showPhotoPermissionsWithTitle:(NSString *)requestTitle
+                               message:(NSString *)message
+                       denyButtonTitle:(NSString *)denyButtonTitle
+                      grantButtonTitle:(NSString *)grantButtonTitle
+                     completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
-- (void) requestContactsPermissionsIfNeededWithRequestTitle:(NSString *)requestTitle
-                                                    message:(NSString *)message
-                                            denyButtonTitle:(NSString *)denyButtonTitle
-                                           grantButtonTitle:(NSString *)grantButtonTitle
-                                          completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+- (void) showContactsPermissionsWithTitle:(NSString *)requestTitle
+                                  message:(NSString *)message
+                          denyButtonTitle:(NSString *)denyButtonTitle
+                         grantButtonTitle:(NSString *)grantButtonTitle
+                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 @end
