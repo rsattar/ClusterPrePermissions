@@ -19,11 +19,12 @@
 		65C599E518F35A4600AE202C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65C599CD18F35A4500AE202C /* UIKit.framework */; };
 		65C599ED18F35A4600AE202C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 65C599EB18F35A4600AE202C /* InfoPlist.strings */; };
 		65C599EF18F35A4600AE202C /* ClusterPrePermissionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 65C599EE18F35A4600AE202C /* ClusterPrePermissionsTests.m */; };
-		65C599FB18F35A6F00AE202C /* ClusterPrePermissions.m in Sources */ = {isa = PBXBuildFile; fileRef = 65C599FA18F35A6F00AE202C /* ClusterPrePermissions.m */; };
 		65C599FF18F36ED400AE202C /* PermissionsTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 65C599FD18F36ED400AE202C /* PermissionsTestViewController.m */; };
 		65C59A0018F36ED400AE202C /* PermissionsTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 65C599FD18F36ED400AE202C /* PermissionsTestViewController.m */; };
 		65C59A0118F36ED400AE202C /* PermissionsTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 65C599FE18F36ED400AE202C /* PermissionsTestViewController.xib */; };
 		65C59A0218F36ED400AE202C /* PermissionsTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 65C599FE18F36ED400AE202C /* PermissionsTestViewController.xib */; };
+		65D1AF1718F4B3BA005ACA29 /* ClusterPrePermissions.m in Sources */ = {isa = PBXBuildFile; fileRef = 65D1AF1618F4B3BA005ACA29 /* ClusterPrePermissions.m */; };
+		65D1AF1818F4B3BA005ACA29 /* ClusterPrePermissions.m in Sources */ = {isa = PBXBuildFile; fileRef = 65D1AF1618F4B3BA005ACA29 /* ClusterPrePermissions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,7 +33,7 @@
 			containerPortal = 65C599BE18F35A4500AE202C /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 65C599C518F35A4500AE202C;
-			remoteInfo = CLPermissions;
+			remoteInfo = ClusterPrePermissions;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -53,11 +54,11 @@
 		65C599EA18F35A4600AE202C /* ClusterPrePermissionsTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ClusterPrePermissionsTests-Info.plist"; sourceTree = "<group>"; };
 		65C599EC18F35A4600AE202C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		65C599EE18F35A4600AE202C /* ClusterPrePermissionsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClusterPrePermissionsTests.m; sourceTree = "<group>"; };
-		65C599F918F35A6F00AE202C /* ClusterPrePermissions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClusterPrePermissions.h; path = CLPermissions/CLPermissions/ClusterPrePermissions.h; sourceTree = "<group>"; };
-		65C599FA18F35A6F00AE202C /* ClusterPrePermissions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ClusterPrePermissions.m; path = CLPermissions/CLPermissions/ClusterPrePermissions.m; sourceTree = "<group>"; };
 		65C599FC18F36ED400AE202C /* PermissionsTestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PermissionsTestViewController.h; sourceTree = "<group>"; };
 		65C599FD18F36ED400AE202C /* PermissionsTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PermissionsTestViewController.m; sourceTree = "<group>"; };
 		65C599FE18F36ED400AE202C /* PermissionsTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PermissionsTestViewController.xib; sourceTree = "<group>"; };
+		65D1AF1518F4B3BA005ACA29 /* ClusterPrePermissions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClusterPrePermissions.h; path = ClusterPrePermissions/ClusterPrePermissions/ClusterPrePermissions.h; sourceTree = "<group>"; };
+		65D1AF1618F4B3BA005ACA29 /* ClusterPrePermissions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ClusterPrePermissions.m; path = ClusterPrePermissions/ClusterPrePermissions/ClusterPrePermissions.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,8 +89,8 @@
 			isa = PBXGroup;
 			children = (
 				65C599F818F35A5100AE202C /* ClusterPrePermissions */,
-				65C599CF18F35A4500AE202C /* App For Testing CLPermissions */,
-				65C599E818F35A4600AE202C /* CLPermissionsTests */,
+				65C599CF18F35A4500AE202C /* App For Testing Pre-Permissions */,
+				65C599E818F35A4600AE202C /* ClusterPrePermissionsTests */,
 				65C599C818F35A4500AE202C /* Frameworks */,
 				65C599C718F35A4500AE202C /* Products */,
 			);
@@ -115,7 +116,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		65C599CF18F35A4500AE202C /* App For Testing CLPermissions */ = {
+		65C599CF18F35A4500AE202C /* App For Testing Pre-Permissions */ = {
 			isa = PBXGroup;
 			children = (
 				65C599D818F35A4500AE202C /* CLAppDelegate.h */,
@@ -126,8 +127,8 @@
 				65C599DB18F35A4500AE202C /* Images.xcassets */,
 				65C599D018F35A4500AE202C /* Supporting Files */,
 			);
-			name = "App For Testing CLPermissions";
-			path = CLPermissions;
+			name = "App For Testing Pre-Permissions";
+			path = ClusterPrePermissions;
 			sourceTree = "<group>";
 		};
 		65C599D018F35A4500AE202C /* Supporting Files */ = {
@@ -141,13 +142,13 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		65C599E818F35A4600AE202C /* CLPermissionsTests */ = {
+		65C599E818F35A4600AE202C /* ClusterPrePermissionsTests */ = {
 			isa = PBXGroup;
 			children = (
 				65C599EE18F35A4600AE202C /* ClusterPrePermissionsTests.m */,
 				65C599E918F35A4600AE202C /* Supporting Files */,
 			);
-			path = CLPermissionsTests;
+			path = ClusterPrePermissionsTests;
 			sourceTree = "<group>";
 		};
 		65C599E918F35A4600AE202C /* Supporting Files */ = {
@@ -162,8 +163,8 @@
 		65C599F818F35A5100AE202C /* ClusterPrePermissions */ = {
 			isa = PBXGroup;
 			children = (
-				65C599F918F35A6F00AE202C /* ClusterPrePermissions.h */,
-				65C599FA18F35A6F00AE202C /* ClusterPrePermissions.m */,
+				65D1AF1518F4B3BA005ACA29 /* ClusterPrePermissions.h */,
+				65D1AF1618F4B3BA005ACA29 /* ClusterPrePermissions.m */,
 			);
 			name = ClusterPrePermissions;
 			sourceTree = "<group>";
@@ -184,7 +185,7 @@
 			dependencies = (
 			);
 			name = ClusterPrePermissions;
-			productName = CLPermissions;
+			productName = ClusterPrePermissions;
 			productReference = 65C599C618F35A4500AE202C /* ClusterPrePermissions.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -202,7 +203,7 @@
 				65C599E718F35A4600AE202C /* PBXTargetDependency */,
 			);
 			name = ClusterPrePermissionsTests;
-			productName = CLPermissionsTests;
+			productName = ClusterPrePermissionsTests;
 			productReference = 65C599E118F35A4600AE202C /* ClusterPrePermissionsTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
@@ -212,7 +213,7 @@
 		65C599BE18F35A4500AE202C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				CLASSPREFIX = CL;
+				CLASSPREFIX = Cluster;
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Cluster Labs, Inc.";
 				TargetAttributes = {
@@ -266,9 +267,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65C599FB18F35A6F00AE202C /* ClusterPrePermissions.m in Sources */,
 				65C599FF18F36ED400AE202C /* PermissionsTestViewController.m in Sources */,
 				65C599D618F35A4500AE202C /* main.m in Sources */,
+				65D1AF1718F4B3BA005ACA29 /* ClusterPrePermissions.m in Sources */,
 				65C599DA18F35A4500AE202C /* CLAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -279,6 +280,7 @@
 			files = (
 				65C599EF18F35A4600AE202C /* ClusterPrePermissionsTests.m in Sources */,
 				65C59A0018F36ED400AE202C /* PermissionsTestViewController.m in Sources */,
+				65D1AF1818F4B3BA005ACA29 /* ClusterPrePermissions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -388,8 +390,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CLPermissions/ClusterPrePermissions-Prefix.pch";
-				INFOPLIST_FILE = "CLPermissions/ClusterPrePermissions-Info.plist";
+				GCC_PREFIX_HEADER = "ClusterPrePermissions/ClusterPrePermissions-Prefix.pch";
+				INFOPLIST_FILE = "ClusterPrePermissions/ClusterPrePermissions-Info.plist";
 				PRODUCT_NAME = ClusterPrePermissions;
 				WRAPPER_EXTENSION = app;
 			};
@@ -401,8 +403,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CLPermissions/ClusterPrePermissions-Prefix.pch";
-				INFOPLIST_FILE = "CLPermissions/ClusterPrePermissions-Info.plist";
+				GCC_PREFIX_HEADER = "ClusterPrePermissions/ClusterPrePermissions-Prefix.pch";
+				INFOPLIST_FILE = "ClusterPrePermissions/ClusterPrePermissions-Info.plist";
 				PRODUCT_NAME = ClusterPrePermissions;
 				WRAPPER_EXTENSION = app;
 			};
@@ -411,19 +413,19 @@
 		65C599F618F35A4600AE202C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CLPermissions.app/CLPermissions";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ClusterPrePermissions.app/ClusterPrePermissions";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CLPermissions/CLPermissions-Prefix.pch";
+				GCC_PREFIX_HEADER = "ClusterPrePermissions/ClusterPrePermissions-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "CLPermissionsTests/ClusterPrePermissionsTests-Info.plist";
+				INFOPLIST_FILE = "ClusterPrePermissionsTests/ClusterPrePermissionsTests-Info.plist";
 				PRODUCT_NAME = ClusterPrePermissionsTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -433,15 +435,15 @@
 		65C599F718F35A4600AE202C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CLPermissions.app/CLPermissions";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ClusterPrePermissions.app/ClusterPrePermissions";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CLPermissions/CLPermissions-Prefix.pch";
-				INFOPLIST_FILE = "CLPermissionsTests/ClusterPrePermissionsTests-Info.plist";
+				GCC_PREFIX_HEADER = "ClusterPrePermissions/ClusterPrePermissions-Prefix.pch";
+				INFOPLIST_FILE = "ClusterPrePermissionsTests/ClusterPrePermissionsTests-Info.plist";
 				PRODUCT_NAME = ClusterPrePermissionsTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
