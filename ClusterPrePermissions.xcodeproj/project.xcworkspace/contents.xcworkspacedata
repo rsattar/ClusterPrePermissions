@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:CLPermissions.xcodeproj">
+      location = "self:ClusterPrePermissions.xcodeproj">
    </FileRef>
 </Workspace>

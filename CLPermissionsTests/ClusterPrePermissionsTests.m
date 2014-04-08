@@ -1,6 +1,6 @@
 //
-//  CLPermissionsTests.m
-//  CLPermissionsTests
+//  ClusterPrePermissionsTests.m
+//  CClusterPrePermissionsTests
 //
 //  Created by Rizwan Sattar on 4/7/14.
 //  Copyright (c) 2014 Cluster Labs, Inc. All rights reserved.
@@ -8,11 +8,11 @@
 
 #import <XCTest/XCTest.h>
 
-@interface CLPermissionsTests : XCTestCase
+@interface ClusterPrePermissionsTests : XCTestCase
 
 @end
 
-@implementation CLPermissionsTests
+@implementation ClusterPrePermissionsTests
 
 - (void)setUp
 {

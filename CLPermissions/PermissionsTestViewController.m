@@ -1,6 +1,6 @@
 //
 //  PermissionsTestViewController.m
-//  CLPermissions
+//  ClusterPrePermissions
 //
 //  Created by Rizwan Sattar on 4/7/14.
 //  Copyright (c) 2014 Cluster Labs, Inc. All rights reserved.
@@ -8,7 +8,7 @@
 
 #import "PermissionsTestViewController.h"
 
-#import "CLPermissions.h"
+#import "ClusterPrePermissions.h"
 
 @interface PermissionsTestViewController ()
 @property (strong, nonatomic) IBOutlet UILabel *photoPermissionResultLabel;
@@ -41,13 +41,13 @@
 
 - (IBAction)onPhotoPermissionsButtonTapped:(id)sender
 {
-    [[CLPermissions sharedPermissions] requestPhotoPermissionsIfNeededWithRequestTitle:nil
+    [[ClusterPrePermissions sharedPermissions] requestPhotoPermissionsIfNeededWithRequestTitle:nil
                                                                                message:@"We'll never upload without your permission"
                                                                        denyButtonTitle:nil
                                                                       grantButtonTitle:nil
                                                                      completionHandler:^(BOOL hasPermission,
-                                                                                         CLDialogResult userDialogResult,
-                                                                                         CLDialogResult systemDialogResult) {
+                                                                                         ClusterDialogResult userDialogResult,
+                                                                                         ClusterDialogResult systemDialogResult) {
                                                                          [self updateResultLabel:self.photoPermissionResultLabel
                                                                                   withPermission:hasPermission
                                                                                 userDialogResult:userDialogResult
@@ -57,13 +57,13 @@
 
 - (IBAction)onContactsButtonPermissionTapped:(id)sender
 {
-    [[CLPermissions sharedPermissions] requestContactsPermissionsIfNeededWithRequestTitle:nil
+    [[ClusterPrePermissions sharedPermissions] requestContactsPermissionsIfNeededWithRequestTitle:nil
                                                                                   message:@"It makes inviting friends easier"
                                                                           denyButtonTitle:nil
                                                                          grantButtonTitle:nil
                                                                         completionHandler:^(BOOL hasPermission,
-                                                                                            CLDialogResult userDialogResult,
-                                                                                            CLDialogResult systemDialogResult) {
+                                                                                            ClusterDialogResult userDialogResult,
+                                                                                            ClusterDialogResult systemDialogResult) {
                                                                             [self updateResultLabel:self.contactsPermissionResultLabel
                                                                                      withPermission:hasPermission
                                                                                    userDialogResult:userDialogResult
@@ -73,8 +73,8 @@
 
 - (void) updateResultLabel:(UILabel *)resultLabel
             withPermission:(BOOL)hasPermission
-          userDialogResult:(CLDialogResult)userDialogResult
-        systemDialogResult:(CLDialogResult)systemDialogResult
+          userDialogResult:(ClusterDialogResult)userDialogResult
+        systemDialogResult:(ClusterDialogResult)systemDialogResult
 {
     resultLabel.text = @"haha";
     resultLabel.alpha = 0.0;
@@ -85,12 +85,12 @@
         resultLabel.textColor = [UIColor colorWithRed:1.0 green:0.1 blue:0.1 alpha:1.0];
     }
     NSString *text = nil;
-    if (userDialogResult == CLDialogResultNoActionTaken &&
-        systemDialogResult == CLDialogResultNoActionTaken) {
+    if (userDialogResult == ClusterDialogResultNoActionTaken &&
+        systemDialogResult == ClusterDialogResultNoActionTaken) {
         NSString *prefix = nil;
         if (hasPermission) {
             prefix = @"Granted.";
-        } else if (systemDialogResult == CLDialogResultParentallyRestricted) {
+        } else if (systemDialogResult == ClusterDialogResultParentallyRestricted) {
             prefix = @"Restricted.";
         } else {
             prefix = @"Denied.";
@@ -108,19 +108,19 @@
     }];
 }
 
-- (NSString *) stringFromDialogResult:(CLDialogResult)result
+- (NSString *) stringFromDialogResult:(ClusterDialogResult)result
 {
     switch (result) {
-        case CLDialogResultNoActionTaken:
+        case ClusterDialogResultNoActionTaken:
             return @"No Action Taken";
             break;
-        case CLDialogResultGranted:
+        case ClusterDialogResultGranted:
             return @"Granted";
             break;
-        case CLDialogResultDenied:
+        case ClusterDialogResultDenied:
             return @"Denied";
             break;
-        case CLDialogResultParentallyRestricted:
+        case ClusterDialogResultParentallyRestricted:
             return @"Restricted";
             break;
         default:

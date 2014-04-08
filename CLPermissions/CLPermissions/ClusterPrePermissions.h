@@ -1,6 +1,6 @@
 //
-//  CLPermissions.h
-//  CLPermissions
+//  ClusterPrePermissions.h
+//  ClusterPrePermissions
 //
 //  Created by Rizwan Sattar on 4/7/14.
 //  Copyright (c) 2014 Cluster Labs, Inc. All rights reserved.
@@ -8,23 +8,23 @@
 
 #import <Foundation/Foundation.h>
 
-@interface CLPermissions : NSObject
+@interface ClusterPrePermissions : NSObject
 
 /**
  * A general descriptor for the possible outcomes of a dialog.
  */
-typedef NS_ENUM(NSInteger, CLDialogResult) {
+typedef NS_ENUM(NSInteger, ClusterDialogResult) {
     /// User was not given the chance to take action.
     /// This can happen if the permission was
     /// already granted, denied, or restricted.
-    CLDialogResultNoActionTaken,
+    ClusterDialogResultNoActionTaken,
     /// User declined access in the user dialog or system dialog.
-    CLDialogResultDenied,
+    ClusterDialogResultDenied,
     /// User granted access in the user dialog or system dialog.
-    CLDialogResultGranted,
+    ClusterDialogResultGranted,
     /// The iOS parental permissions prevented access.
     /// This outcome would only happen on the system dialog.
-    CLDialogResultParentallyRestricted
+    ClusterDialogResultParentallyRestricted
 };
 
 /**
@@ -33,15 +33,15 @@ typedef NS_ENUM(NSInteger, CLDialogResult) {
  *                      or is already available, NO otherwise.
  * @param userDialogResult Describes whether the user granted/denied access, 
  *                         or if the user didn't have an opportunity to take action. 
- *                         CLDialogResultParentallyRestricted is never returned.
+ *                         ClusterDialogResultParentallyRestricted is never returned.
  * @param systemDialogResult Describes whether the user granted/denied access, 
  *                           or was parentally restricted, or if the user didn't 
  *                           have an opportunity to take action.
- * @see CLDialogResult
+ * @see ClusterDialogResult
  */
-typedef void (^CLPermissionCompletionHandler)(BOOL hasPermission,
-                                              CLDialogResult userDialogResult,
-                                              CLDialogResult systemDialogResult);
+typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
+                                              ClusterDialogResult userDialogResult,
+                                              ClusterDialogResult systemDialogResult);
 
 + (instancetype) sharedPermissions;
 
@@ -49,11 +49,11 @@ typedef void (^CLPermissionCompletionHandler)(BOOL hasPermission,
                                                  message:(NSString *)message
                                          denyButtonTitle:(NSString *)denyButtonTitle
                                         grantButtonTitle:(NSString *)grantButtonTitle
-                                       completionHandler:(CLPermissionCompletionHandler)completionHandler;
+                                       completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 - (void) requestContactsPermissionsIfNeededWithRequestTitle:(NSString *)requestTitle
                                                     message:(NSString *)message
                                             denyButtonTitle:(NSString *)denyButtonTitle
                                            grantButtonTitle:(NSString *)grantButtonTitle
-                                          completionHandler:(CLPermissionCompletionHandler)completionHandler;
+                                          completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 @end

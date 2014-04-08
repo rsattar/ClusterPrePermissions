@@ -1,35 +1,35 @@
 //
-//  CLPermissions.m
-//  CLPermissions
+//  ClusterPrePermissions.m
+//  ClusterPrePermissions
 //
 //  Created by Rizwan Sattar on 4/7/14.
 //  Copyright (c) 2014 Cluster Labs, Inc. All rights reserved.
 //
 
-#import "CLPermissions.h"
+#import "ClusterPrePermissions.h"
 
 #import <AddressBook/AddressBook.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 
-@interface CLPermissions () <UIAlertViewDelegate>
+@interface ClusterPrePermissions () <UIAlertViewDelegate>
 
 @property (strong, nonatomic) UIAlertView *prePhotoPermissionAlertView;
-@property (copy, nonatomic) CLPermissionCompletionHandler photoPermissionCompletionHandler;
+@property (copy, nonatomic) ClusterPrePermissionCompletionHandler photoPermissionCompletionHandler;
 
 @property (strong, nonatomic) UIAlertView *preContactPermissionAlertView;
-@property (copy, nonatomic) CLPermissionCompletionHandler contactPermissionCompletionHandler;
+@property (copy, nonatomic) ClusterPrePermissionCompletionHandler contactPermissionCompletionHandler;
 
 @end
 
-static CLPermissions *__sharedInstance;
+static ClusterPrePermissions *__sharedInstance;
 
-@implementation CLPermissions
+@implementation ClusterPrePermissions
 
 + (instancetype) sharedPermissions
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        __sharedInstance = [[CLPermissions alloc] init];
+        __sharedInstance = [[ClusterPrePermissions alloc] init];
     });
     return __sharedInstance;
 }
@@ -42,7 +42,7 @@ static CLPermissions *__sharedInstance;
                                                  message:(NSString *)message
                                          denyButtonTitle:(NSString *)denyButtonTitle
                                         grantButtonTitle:(NSString *)grantButtonTitle
-                                       completionHandler:(CLPermissionCompletionHandler)completionHandler
+                                       completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
     if (requestTitle.length == 0) {
         requestTitle = @"Access Photos?";
@@ -65,8 +65,8 @@ static CLPermissions *__sharedInstance;
     } else {
         if (completionHandler) {
             completionHandler((status == ALAuthorizationStatusAuthorized),
-                              CLDialogResultNoActionTaken,
-                              CLDialogResultNoActionTaken);
+                              ClusterDialogResultNoActionTaken,
+                              ClusterDialogResultNoActionTaken);
         }
     }
 }
@@ -90,20 +90,20 @@ static CLPermissions *__sharedInstance;
 {
     ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
     if (self.photoPermissionCompletionHandler) {
-        CLDialogResult userDialogResult = CLDialogResultGranted;
-        CLDialogResult systemDialogResult = CLDialogResultGranted;
+        ClusterDialogResult userDialogResult = ClusterDialogResultGranted;
+        ClusterDialogResult systemDialogResult = ClusterDialogResultGranted;
         if (status == ALAuthorizationStatusNotDetermined) {
-            userDialogResult = CLDialogResultDenied;
-            systemDialogResult = CLDialogResultNoActionTaken;
+            userDialogResult = ClusterDialogResultDenied;
+            systemDialogResult = ClusterDialogResultNoActionTaken;
         } else if (status == ALAuthorizationStatusAuthorized) {
-            userDialogResult = CLDialogResultGranted;
-            systemDialogResult = CLDialogResultGranted;
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultGranted;
         } else if (status == ALAuthorizationStatusDenied) {
-            userDialogResult = CLDialogResultGranted;
-            systemDialogResult = CLDialogResultDenied;
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultDenied;
         } else if (status == ALAuthorizationStatusRestricted) {
-            userDialogResult = CLDialogResultGranted;
-            systemDialogResult = CLDialogResultParentallyRestricted;
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultParentallyRestricted;
         }
         self.photoPermissionCompletionHandler((status == ALAuthorizationStatusAuthorized),
                                               userDialogResult,
@@ -120,7 +120,7 @@ static CLPermissions *__sharedInstance;
                                                     message:(NSString *)message
                                             denyButtonTitle:(NSString *)denyButtonTitle
                                            grantButtonTitle:(NSString *)grantButtonTitle
-                                          completionHandler:(CLPermissionCompletionHandler)completionHandler
+                                          completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
     if (requestTitle.length == 0) {
         requestTitle = @"Access Contacts?";
@@ -143,8 +143,8 @@ static CLPermissions *__sharedInstance;
     } else {
         if (completionHandler) {
             completionHandler((status == kABAuthorizationStatusAuthorized),
-                              CLDialogResultNoActionTaken,
-                              CLDialogResultNoActionTaken);
+                              ClusterDialogResultNoActionTaken,
+                              ClusterDialogResultNoActionTaken);
         }
     }
 }
@@ -166,20 +166,20 @@ static CLPermissions *__sharedInstance;
 {
     ABAuthorizationStatus status = ABAddressBookGetAuthorizationStatus();
     if (self.contactPermissionCompletionHandler) {
-        CLDialogResult userDialogResult = CLDialogResultGranted;
-        CLDialogResult systemDialogResult = CLDialogResultGranted;
+        ClusterDialogResult userDialogResult = ClusterDialogResultGranted;
+        ClusterDialogResult systemDialogResult = ClusterDialogResultGranted;
         if (status == kABAuthorizationStatusNotDetermined) {
-            userDialogResult = CLDialogResultDenied;
-            systemDialogResult = CLDialogResultNoActionTaken;
+            userDialogResult = ClusterDialogResultDenied;
+            systemDialogResult = ClusterDialogResultNoActionTaken;
         } else if (status == kABAuthorizationStatusAuthorized) {
-            userDialogResult = CLDialogResultGranted;
-            systemDialogResult = CLDialogResultGranted;
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultGranted;
         } else if (status == kABAuthorizationStatusDenied) {
-            userDialogResult = CLDialogResultGranted;
-            systemDialogResult = CLDialogResultDenied;
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultDenied;
         } else if (status == kABAuthorizationStatusRestricted) {
-            userDialogResult = CLDialogResultGranted;
-            systemDialogResult = CLDialogResultParentallyRestricted;
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultParentallyRestricted;
         }
         self.contactPermissionCompletionHandler((status == kABAuthorizationStatusAuthorized),
                                                 userDialogResult,

@@ -18,8 +18,8 @@
 		65C599E418F35A4600AE202C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65C599C918F35A4500AE202C /* Foundation.framework */; };
 		65C599E518F35A4600AE202C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65C599CD18F35A4500AE202C /* UIKit.framework */; };
 		65C599ED18F35A4600AE202C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 65C599EB18F35A4600AE202C /* InfoPlist.strings */; };
-		65C599EF18F35A4600AE202C /* CLPermissionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 65C599EE18F35A4600AE202C /* CLPermissionsTests.m */; };
-		65C599FB18F35A6F00AE202C /* CLPermissions.m in Sources */ = {isa = PBXBuildFile; fileRef = 65C599FA18F35A6F00AE202C /* CLPermissions.m */; };
+		65C599EF18F35A4600AE202C /* ClusterPrePermissionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 65C599EE18F35A4600AE202C /* ClusterPrePermissionsTests.m */; };
+		65C599FB18F35A6F00AE202C /* ClusterPrePermissions.m in Sources */ = {isa = PBXBuildFile; fileRef = 65C599FA18F35A6F00AE202C /* ClusterPrePermissions.m */; };
 		65C599FF18F36ED400AE202C /* PermissionsTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 65C599FD18F36ED400AE202C /* PermissionsTestViewController.m */; };
 		65C59A0018F36ED400AE202C /* PermissionsTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 65C599FD18F36ED400AE202C /* PermissionsTestViewController.m */; };
 		65C59A0118F36ED400AE202C /* PermissionsTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 65C599FE18F36ED400AE202C /* PermissionsTestViewController.xib */; };
@@ -37,24 +37,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		65C599C618F35A4500AE202C /* CLPermissions.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CLPermissions.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		65C599C618F35A4500AE202C /* ClusterPrePermissions.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClusterPrePermissions.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		65C599C918F35A4500AE202C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		65C599CB18F35A4500AE202C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		65C599CD18F35A4500AE202C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		65C599D118F35A4500AE202C /* CLPermissions-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CLPermissions-Info.plist"; sourceTree = "<group>"; };
+		65C599D118F35A4500AE202C /* ClusterPrePermissions-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ClusterPrePermissions-Info.plist"; sourceTree = "<group>"; };
 		65C599D318F35A4500AE202C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		65C599D518F35A4500AE202C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		65C599D718F35A4500AE202C /* CLPermissions-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CLPermissions-Prefix.pch"; sourceTree = "<group>"; };
+		65C599D718F35A4500AE202C /* ClusterPrePermissions-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ClusterPrePermissions-Prefix.pch"; sourceTree = "<group>"; };
 		65C599D818F35A4500AE202C /* CLAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLAppDelegate.h; sourceTree = "<group>"; };
 		65C599D918F35A4500AE202C /* CLAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLAppDelegate.m; sourceTree = "<group>"; };
 		65C599DB18F35A4500AE202C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		65C599E118F35A4600AE202C /* CLPermissionsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CLPermissionsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		65C599E118F35A4600AE202C /* ClusterPrePermissionsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClusterPrePermissionsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		65C599E218F35A4600AE202C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		65C599EA18F35A4600AE202C /* CLPermissionsTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CLPermissionsTests-Info.plist"; sourceTree = "<group>"; };
+		65C599EA18F35A4600AE202C /* ClusterPrePermissionsTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ClusterPrePermissionsTests-Info.plist"; sourceTree = "<group>"; };
 		65C599EC18F35A4600AE202C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		65C599EE18F35A4600AE202C /* CLPermissionsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLPermissionsTests.m; sourceTree = "<group>"; };
-		65C599F918F35A6F00AE202C /* CLPermissions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLPermissions.h; path = CLPermissions/CLPermissions/CLPermissions.h; sourceTree = "<group>"; };
-		65C599FA18F35A6F00AE202C /* CLPermissions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CLPermissions.m; path = CLPermissions/CLPermissions/CLPermissions.m; sourceTree = "<group>"; };
+		65C599EE18F35A4600AE202C /* ClusterPrePermissionsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClusterPrePermissionsTests.m; sourceTree = "<group>"; };
+		65C599F918F35A6F00AE202C /* ClusterPrePermissions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClusterPrePermissions.h; path = CLPermissions/CLPermissions/ClusterPrePermissions.h; sourceTree = "<group>"; };
+		65C599FA18F35A6F00AE202C /* ClusterPrePermissions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ClusterPrePermissions.m; path = CLPermissions/CLPermissions/ClusterPrePermissions.m; sourceTree = "<group>"; };
 		65C599FC18F36ED400AE202C /* PermissionsTestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PermissionsTestViewController.h; sourceTree = "<group>"; };
 		65C599FD18F36ED400AE202C /* PermissionsTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PermissionsTestViewController.m; sourceTree = "<group>"; };
 		65C599FE18F36ED400AE202C /* PermissionsTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PermissionsTestViewController.xib; sourceTree = "<group>"; };
@@ -87,7 +87,7 @@
 		65C599BD18F35A4500AE202C = {
 			isa = PBXGroup;
 			children = (
-				65C599F818F35A5100AE202C /* CLPermissions */,
+				65C599F818F35A5100AE202C /* ClusterPrePermissions */,
 				65C599CF18F35A4500AE202C /* App For Testing CLPermissions */,
 				65C599E818F35A4600AE202C /* CLPermissionsTests */,
 				65C599C818F35A4500AE202C /* Frameworks */,
@@ -98,8 +98,8 @@
 		65C599C718F35A4500AE202C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				65C599C618F35A4500AE202C /* CLPermissions.app */,
-				65C599E118F35A4600AE202C /* CLPermissionsTests.xctest */,
+				65C599C618F35A4500AE202C /* ClusterPrePermissions.app */,
+				65C599E118F35A4600AE202C /* ClusterPrePermissionsTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -133,10 +133,10 @@
 		65C599D018F35A4500AE202C /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				65C599D118F35A4500AE202C /* CLPermissions-Info.plist */,
+				65C599D118F35A4500AE202C /* ClusterPrePermissions-Info.plist */,
 				65C599D218F35A4500AE202C /* InfoPlist.strings */,
 				65C599D518F35A4500AE202C /* main.m */,
-				65C599D718F35A4500AE202C /* CLPermissions-Prefix.pch */,
+				65C599D718F35A4500AE202C /* ClusterPrePermissions-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -144,7 +144,7 @@
 		65C599E818F35A4600AE202C /* CLPermissionsTests */ = {
 			isa = PBXGroup;
 			children = (
-				65C599EE18F35A4600AE202C /* CLPermissionsTests.m */,
+				65C599EE18F35A4600AE202C /* ClusterPrePermissionsTests.m */,
 				65C599E918F35A4600AE202C /* Supporting Files */,
 			);
 			path = CLPermissionsTests;
@@ -153,27 +153,27 @@
 		65C599E918F35A4600AE202C /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				65C599EA18F35A4600AE202C /* CLPermissionsTests-Info.plist */,
+				65C599EA18F35A4600AE202C /* ClusterPrePermissionsTests-Info.plist */,
 				65C599EB18F35A4600AE202C /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		65C599F818F35A5100AE202C /* CLPermissions */ = {
+		65C599F818F35A5100AE202C /* ClusterPrePermissions */ = {
 			isa = PBXGroup;
 			children = (
-				65C599F918F35A6F00AE202C /* CLPermissions.h */,
-				65C599FA18F35A6F00AE202C /* CLPermissions.m */,
+				65C599F918F35A6F00AE202C /* ClusterPrePermissions.h */,
+				65C599FA18F35A6F00AE202C /* ClusterPrePermissions.m */,
 			);
-			name = CLPermissions;
+			name = ClusterPrePermissions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		65C599C518F35A4500AE202C /* CLPermissions */ = {
+		65C599C518F35A4500AE202C /* ClusterPrePermissions */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 65C599F218F35A4600AE202C /* Build configuration list for PBXNativeTarget "CLPermissions" */;
+			buildConfigurationList = 65C599F218F35A4600AE202C /* Build configuration list for PBXNativeTarget "ClusterPrePermissions" */;
 			buildPhases = (
 				65C599C218F35A4500AE202C /* Sources */,
 				65C599C318F35A4500AE202C /* Frameworks */,
@@ -183,14 +183,14 @@
 			);
 			dependencies = (
 			);
-			name = CLPermissions;
+			name = ClusterPrePermissions;
 			productName = CLPermissions;
-			productReference = 65C599C618F35A4500AE202C /* CLPermissions.app */;
+			productReference = 65C599C618F35A4500AE202C /* ClusterPrePermissions.app */;
 			productType = "com.apple.product-type.application";
 		};
-		65C599E018F35A4600AE202C /* CLPermissionsTests */ = {
+		65C599E018F35A4600AE202C /* ClusterPrePermissionsTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 65C599F518F35A4600AE202C /* Build configuration list for PBXNativeTarget "CLPermissionsTests" */;
+			buildConfigurationList = 65C599F518F35A4600AE202C /* Build configuration list for PBXNativeTarget "ClusterPrePermissionsTests" */;
 			buildPhases = (
 				65C599DD18F35A4600AE202C /* Sources */,
 				65C599DE18F35A4600AE202C /* Frameworks */,
@@ -201,9 +201,9 @@
 			dependencies = (
 				65C599E718F35A4600AE202C /* PBXTargetDependency */,
 			);
-			name = CLPermissionsTests;
+			name = ClusterPrePermissionsTests;
 			productName = CLPermissionsTests;
-			productReference = 65C599E118F35A4600AE202C /* CLPermissionsTests.xctest */;
+			productReference = 65C599E118F35A4600AE202C /* ClusterPrePermissionsTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -221,7 +221,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 65C599C118F35A4500AE202C /* Build configuration list for PBXProject "CLPermissions" */;
+			buildConfigurationList = 65C599C118F35A4500AE202C /* Build configuration list for PBXProject "ClusterPrePermissions" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -233,8 +233,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				65C599C518F35A4500AE202C /* CLPermissions */,
-				65C599E018F35A4600AE202C /* CLPermissionsTests */,
+				65C599C518F35A4500AE202C /* ClusterPrePermissions */,
+				65C599E018F35A4600AE202C /* ClusterPrePermissionsTests */,
 			);
 		};
 /* End PBXProject section */
@@ -266,7 +266,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65C599FB18F35A6F00AE202C /* CLPermissions.m in Sources */,
+				65C599FB18F35A6F00AE202C /* ClusterPrePermissions.m in Sources */,
 				65C599FF18F36ED400AE202C /* PermissionsTestViewController.m in Sources */,
 				65C599D618F35A4500AE202C /* main.m in Sources */,
 				65C599DA18F35A4500AE202C /* CLAppDelegate.m in Sources */,
@@ -277,7 +277,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65C599EF18F35A4600AE202C /* CLPermissionsTests.m in Sources */,
+				65C599EF18F35A4600AE202C /* ClusterPrePermissionsTests.m in Sources */,
 				65C59A0018F36ED400AE202C /* PermissionsTestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -287,7 +287,7 @@
 /* Begin PBXTargetDependency section */
 		65C599E718F35A4600AE202C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 65C599C518F35A4500AE202C /* CLPermissions */;
+			target = 65C599C518F35A4500AE202C /* ClusterPrePermissions */;
 			targetProxy = 65C599E618F35A4600AE202C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -388,9 +388,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CLPermissions/CLPermissions-Prefix.pch";
-				INFOPLIST_FILE = "CLPermissions/CLPermissions-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_PREFIX_HEADER = "CLPermissions/ClusterPrePermissions-Prefix.pch";
+				INFOPLIST_FILE = "CLPermissions/ClusterPrePermissions-Info.plist";
+				PRODUCT_NAME = ClusterPrePermissions;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -401,9 +401,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CLPermissions/CLPermissions-Prefix.pch";
-				INFOPLIST_FILE = "CLPermissions/CLPermissions-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_PREFIX_HEADER = "CLPermissions/ClusterPrePermissions-Prefix.pch";
+				INFOPLIST_FILE = "CLPermissions/ClusterPrePermissions-Info.plist";
+				PRODUCT_NAME = ClusterPrePermissions;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -423,8 +423,8 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "CLPermissionsTests/CLPermissionsTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "CLPermissionsTests/ClusterPrePermissionsTests-Info.plist";
+				PRODUCT_NAME = ClusterPrePermissionsTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -441,8 +441,8 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CLPermissions/CLPermissions-Prefix.pch";
-				INFOPLIST_FILE = "CLPermissionsTests/CLPermissionsTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "CLPermissionsTests/ClusterPrePermissionsTests-Info.plist";
+				PRODUCT_NAME = ClusterPrePermissionsTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -451,7 +451,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		65C599C118F35A4500AE202C /* Build configuration list for PBXProject "CLPermissions" */ = {
+		65C599C118F35A4500AE202C /* Build configuration list for PBXProject "ClusterPrePermissions" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				65C599F018F35A4600AE202C /* Debug */,
@@ -460,21 +460,23 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		65C599F218F35A4600AE202C /* Build configuration list for PBXNativeTarget "CLPermissions" */ = {
+		65C599F218F35A4600AE202C /* Build configuration list for PBXNativeTarget "ClusterPrePermissions" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				65C599F318F35A4600AE202C /* Debug */,
 				65C599F418F35A4600AE202C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
-		65C599F518F35A4600AE202C /* Build configuration list for PBXNativeTarget "CLPermissionsTests" */ = {
+		65C599F518F35A4600AE202C /* Build configuration list for PBXNativeTarget "ClusterPrePermissionsTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				65C599F618F35A4600AE202C /* Debug */,
 				65C599F718F35A4600AE202C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
