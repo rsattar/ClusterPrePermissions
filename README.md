@@ -38,7 +38,7 @@ CLPermissions checks the authorization status of photos and contacts, and, given
 
 If the authorization status already unchangeable, your block will just be called back. You can check the `userDialogResult` and `systemDialogResult` to see what happened. If both are `ClusterDialogResultNoActionTaken`, then it means the access was already denied or granted by the system.
 
-```
+```objc
 ClusterPrePermissions *permissions = [ClusterPrePermissions sharedPermissions];
 [permissions showPhotoPermissionsWithTitle:@"Access your photos?"
                                    message:@"Your message here"
