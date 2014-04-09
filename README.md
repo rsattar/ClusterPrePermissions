@@ -19,7 +19,7 @@ At [Cluster](http://cluster.co), we’ve had a lot of success asking for permiss
 
 This utility simply wraps your code with a "pre-permission" alert, if needed. When you need to ask for photo access, for example, this utility essentially just asks them twice.
 
-![image](https://d262ilb51hltx0.cloudfront.net/max/960/1*xFAHoLJsAAc6yi7uNyuNQQ.jpeg)
+![image](http://f.cl.ly/items/302Z2w3h1d2a3336413B/new.jpg)
 
 Even though it seems annoying to ask twice, at Cluster we almost completely eliminated the possibility of a user tapping “Don’t Allow”, leaving the door open for us to win them back in the future. And for what it’s worth, in [live user tests](https://medium.com/ux-ui-design/9b7e9edd2de8), not a single test subject hesitated (or expressed confusion) when the second dialog appeared.
 
