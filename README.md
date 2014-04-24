@@ -25,6 +25,16 @@ Even though it seems annoying to ask twice, at Cluster we almost completely elim
 
 # Adding ClusterPrePermissions to your project
 
+## Cocoapods
+
+[CocoaPods](http://cocoapods.org/) is the recommended way to add ClusterPrePermissions to your project.
+
+1. Add a pod entry for ClusterPrePermissions to your Podfile `pod 'ClusterPrePermissions', '~> 0.1'`
+2. Install the pod(s) by running `pod install`
+3. Include ClusterPrePermissions wherever you need it with `#import <ClusterPrePermissions/ClusterPrePermissions.h>`
+
+## Source Files
+
 Add `ClusterPrePermissions.h` and `ClusterPrePermissions.m` into your project.
 
 1. Download the latest code, using `git clone`.
