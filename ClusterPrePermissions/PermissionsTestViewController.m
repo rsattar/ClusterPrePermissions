@@ -13,6 +13,7 @@
 @interface PermissionsTestViewController ()
 @property (strong, nonatomic) IBOutlet UILabel *photoPermissionResultLabel;
 @property (strong, nonatomic) IBOutlet UILabel *contactsPermissionResultLabel;
+@property (strong, nonatomic) IBOutlet UILabel *locationPermissionResultLabel;
 
 @end
 
@@ -72,6 +73,24 @@
                                          systemDialogResult:systemDialogResult];
                                 }];
 }
+
+- (IBAction)onLocationButtonPermissionTapped:(id)sender
+{
+    ClusterPrePermissions *permissions = [ClusterPrePermissions sharedPermissions];
+    [permissions showLocationPermissionsWithTitle:@"Access your location?"
+                                          message:@"Your message here"
+                                  denyButtonTitle:@"Not Now"
+                                 grantButtonTitle:@"Give Access"
+                                completionHandler:^(BOOL hasPermission,
+                                                    ClusterDialogResult userDialogResult,
+                                                    ClusterDialogResult systemDialogResult) {
+                                    [self updateResultLabel:self.locationPermissionResultLabel
+                                             withPermission:hasPermission
+                                           userDialogResult:userDialogResult
+                                         systemDialogResult:systemDialogResult];
+                                }];
+}
+
 
 - (void) updateResultLabel:(UILabel *)resultLabel
             withPermission:(BOOL)hasPermission

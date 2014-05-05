@@ -28,14 +28,19 @@
 
 #import <AddressBook/AddressBook.h>
 #import <AssetsLibrary/AssetsLibrary.h>
+#import <CoreLocation/CoreLocation.h>
 
-@interface ClusterPrePermissions () <UIAlertViewDelegate>
+@interface ClusterPrePermissions () <UIAlertViewDelegate, CLLocationManagerDelegate>
 
 @property (strong, nonatomic) UIAlertView *prePhotoPermissionAlertView;
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler photoPermissionCompletionHandler;
 
 @property (strong, nonatomic) UIAlertView *preContactPermissionAlertView;
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler contactPermissionCompletionHandler;
+
+@property (strong, nonatomic) UIAlertView *preLocationPermissionAlertView;
+@property (copy, nonatomic) ClusterPrePermissionCompletionHandler locationPermissionCompletionHandler;
+@property (strong, nonatomic) CLLocationManager *locationManager;
 
 @end
 
@@ -206,6 +211,91 @@ static ClusterPrePermissions *__sharedInstance;
 }
 
 
+#pragma mark - Location Permission Help
+
+
+- (void) showLocationPermissionsWithTitle:(NSString *)requestTitle
+                                  message:(NSString *)message
+                          denyButtonTitle:(NSString *)denyButtonTitle
+                         grantButtonTitle:(NSString *)grantButtonTitle
+                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
+    if (requestTitle.length == 0) {
+        requestTitle = @"Access Location?";
+    }
+    if (denyButtonTitle.length == 0) {
+        denyButtonTitle = @"Not Now";
+    }
+    if (grantButtonTitle.length == 0) {
+        grantButtonTitle = @"Give Access";
+    }
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+    if (status == kCLAuthorizationStatusNotDetermined) {
+        self.locationPermissionCompletionHandler = completionHandler;
+        self.preLocationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                         message:message
+                                                                        delegate:self
+                                                               cancelButtonTitle:denyButtonTitle
+                                                               otherButtonTitles:grantButtonTitle, nil];
+        [self.preLocationPermissionAlertView show];
+    } else {
+        if (completionHandler) {
+            completionHandler((status == kCLAuthorizationStatusAuthorized),
+                              ClusterDialogResultNoActionTaken,
+                              ClusterDialogResultNoActionTaken);
+        }
+    }
+}
+
+
+- (void) showActualLocationPermissionAlert
+{
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    [self.locationManager startUpdatingLocation];
+}
+
+
+- (void) fireLocationPermissionCompletionHandler
+{
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+    if (self.locationPermissionCompletionHandler) {
+        ClusterDialogResult userDialogResult = ClusterDialogResultGranted;
+        ClusterDialogResult systemDialogResult = ClusterDialogResultGranted;
+        if (status == kCLAuthorizationStatusNotDetermined) {
+            userDialogResult = ClusterDialogResultDenied;
+            systemDialogResult = ClusterDialogResultNoActionTaken;
+        } else if (status == kCLAuthorizationStatusAuthorized) {
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultGranted;
+        } else if (status == kCLAuthorizationStatusDenied) {
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultDenied;
+        } else if (status == kCLAuthorizationStatusRestricted) {
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultParentallyRestricted;
+        }
+        self.locationPermissionCompletionHandler((status == kCLAuthorizationStatusAuthorized),
+                                                 userDialogResult,
+                                                 systemDialogResult);
+        self.locationPermissionCompletionHandler = nil;
+    }
+    if (self.locationManager) {
+        [self.locationManager stopUpdatingLocation], self.locationManager = nil;
+    }
+}
+
+
+#pragma mark CLLocationManagerDelegate
+
+- (void) locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    if (status != kCLAuthorizationStatusNotDetermined) {
+        [self fireLocationPermissionCompletionHandler];
+    }
+}
+
+
 #pragma mark - UIAlertViewDelegate
 
 
@@ -228,6 +318,14 @@ static ClusterPrePermissions *__sharedInstance;
         } else {
             // User granted access, now try to trigger the real contacts access
             [self showActualContactPermissionAlert];
+        }
+    } else if (alertView == self.preLocationPermissionAlertView) {
+        if (buttonIndex == alertView.cancelButtonIndex) {
+            // User said NO, that jerk.
+            [self fireLocationPermissionCompletionHandler];
+        } else {
+            // User granted access, now try to trigger the real location access
+            [self showActualLocationPermissionAlert];
         }
     }
 }
