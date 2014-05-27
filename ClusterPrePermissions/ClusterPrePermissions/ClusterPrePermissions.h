@@ -45,6 +45,13 @@ typedef NS_ENUM(NSInteger, ClusterDialogResult) {
     ClusterDialogResultParentallyRestricted
 };
 
+//Enum to cover the various states of push notification status authorization
+typedef enum {
+    kPushAuthorizationStatusAuthorized = 0,
+    kPushAuthorizationStatusDenied,
+    kPushAuthorizationStatusNotDetermined
+} PushAuthorizationStatus;
+
 /**
  * General callback for permissions. 
  * @param hasPermission Returns YES if system permission was granted 
@@ -80,5 +87,11 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
                           denyButtonTitle:(NSString *)denyButtonTitle
                          grantButtonTitle:(NSString *)grantButtonTitle
                         completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+
+- (void) showPushNotificationPermissionsWithTitle:(NSString *)requestTitle
+                                          message:(NSString *)message
+                                  denyButtonTitle:(NSString *)denyButtonTitle
+                                 grantButtonTitle:(NSString *)grantButtonTitle
+                                completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 @end
