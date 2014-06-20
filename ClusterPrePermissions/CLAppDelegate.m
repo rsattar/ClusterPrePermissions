@@ -12,6 +12,14 @@
 
 @implementation CLAppDelegate
 
++(void) initialize
+{
+    //This user default flag will allow us to check if we've asked for push notification permissions
+    NSDictionary *pushNotificationFlag = @{@"pushNotification" : [NSNumber numberWithBool:false]};
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults registerDefaults:pushNotificationFlag ];
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -20,6 +28,26 @@
     self.window.rootViewController = [[PermissionsTestViewController alloc] initWithNibName:nil bundle:nil];
     [self.window makeKeyAndVisible];
     return YES;
+}
+
+-(void)application:(UIApplication*) application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
+    bool pushNotification = [[NSUserDefaults standardUserDefaults] boolForKey:@"pushNotification"];
+    if(!pushNotification) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"pushNotification"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+    //Register device token stuff with whatever push notification system you're using
+}
+
+-(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+{
+    //Handle information from remote notification here
+}
+
+-(void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+{
+    NSLog(@"%@", error);
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

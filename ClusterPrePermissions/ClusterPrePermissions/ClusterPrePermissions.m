@@ -42,6 +42,9 @@
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler locationPermissionCompletionHandler;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 
+@property (strong, nonatomic) UIAlertView *prePushNotificationPermissionAlertView;
+@property (copy, nonatomic) ClusterPrePermissionCompletionHandler pushNotificationPermissionCompletionHandler;
+
 @end
 
 static ClusterPrePermissions *__sharedInstance;
@@ -285,7 +288,6 @@ static ClusterPrePermissions *__sharedInstance;
     }
 }
 
-
 #pragma mark CLLocationManagerDelegate
 
 - (void) locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
@@ -293,6 +295,87 @@ static ClusterPrePermissions *__sharedInstance;
     if (status != kCLAuthorizationStatusNotDetermined) {
         [self fireLocationPermissionCompletionHandler];
     }
+}
+
+#pragma mark - Push Notification Permission Help
+
+-(void) showPushNotificationPermissionsWithTitle:(NSString *)requestTitle
+                                         message:(NSString *)message
+                                 denyButtonTitle:(NSString *)denyButtonTitle
+                                grantButtonTitle:(NSString *)grantButtonTitle
+                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
+    if (requestTitle.length == 0) {
+        requestTitle = @"Allow Push Notifications?";
+    }
+    if (denyButtonTitle.length == 0) {
+        denyButtonTitle = @"Not Now";
+    }
+    if (grantButtonTitle.length == 0) {
+        grantButtonTitle = @"Give Access";
+    }
+    PushAuthorizationStatus status = [self pushAuthorizationStatus];
+    if (status == kPushAuthorizationStatusNotDetermined) {
+        self.pushNotificationPermissionCompletionHandler = completionHandler;
+        self.prePushNotificationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                                 message:message
+                                                                                delegate:self
+                                                                       cancelButtonTitle:denyButtonTitle
+                                                                       otherButtonTitles:grantButtonTitle, nil];
+        [self.prePushNotificationPermissionAlertView show];
+    } else {
+        if (completionHandler) {
+            completionHandler((status == kPushAuthorizationStatusAuthorized),
+                              ClusterDialogResultNoActionTaken,
+                              ClusterDialogResultNoActionTaken);
+        }
+    }
+}
+
+- (void) showActualPushNotificationPermissionAlert
+{
+    //Modify this to change which type of push notifications are allowed
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    [self firePushNotificationPermissionCompletionHandler];
+}
+
+
+- (void) firePushNotificationPermissionCompletionHandler
+{
+    PushAuthorizationStatus status = [self pushAuthorizationStatus];
+    if (self.pushNotificationPermissionCompletionHandler) {
+        ClusterDialogResult userDialogResult = ClusterDialogResultGranted;
+        ClusterDialogResult systemDialogResult = ClusterDialogResultGranted;
+        if(status == kPushAuthorizationStatusNotDetermined) {
+            userDialogResult = ClusterDialogResultDenied;
+            systemDialogResult = ClusterDialogResultNoActionTaken;
+        } else if(status == kPushAuthorizationStatusAuthorized ) {
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultGranted;
+        } else if(status == kPushAuthorizationStatusDenied) {
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultDenied;
+        }
+        self.pushNotificationPermissionCompletionHandler((status == kPushAuthorizationStatusAuthorized),
+                                                         userDialogResult,
+                                                         systemDialogResult);
+        self.pushNotificationPermissionCompletionHandler = nil;
+    }
+}
+
+- (PushAuthorizationStatus)pushAuthorizationStatus
+{
+    UIRemoteNotificationType types = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+    
+    if(types) {
+        return kPushAuthorizationStatusAuthorized;
+    }
+    bool didRegisterforPush =[[NSUserDefaults standardUserDefaults] boolForKey:@"pushNotification"];
+    //If true, they declined to receive push notifications from the actual dialog
+    if(didRegisterforPush) {
+        return kPushAuthorizationStatusDenied;
+    }
+    return kPushAuthorizationStatusNotDetermined;
 }
 
 
@@ -309,7 +392,6 @@ static ClusterPrePermissions *__sharedInstance;
             // User granted access, now show the REAL permissions dialog
             [self showActualPhotoPermissionAlert];
         }
-
         self.prePhotoPermissionAlertView = nil;
     } else if (alertView == self.preContactPermissionAlertView) {
         if (buttonIndex == alertView.cancelButtonIndex) {
@@ -326,6 +408,14 @@ static ClusterPrePermissions *__sharedInstance;
         } else {
             // User granted access, now try to trigger the real location access
             [self showActualLocationPermissionAlert];
+        }
+    } else if (alertView == self.prePushNotificationPermissionAlertView) {
+        if (buttonIndex == alertView.cancelButtonIndex) {
+            //User said NO, that jerk.
+            [self firePushNotificationPermissionCompletionHandler];
+        } else {
+            //User granted access, now show the real permission dialog for push notifications
+            [self showActualPushNotificationPermissionAlert];
         }
     }
 }
