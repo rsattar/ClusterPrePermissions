@@ -24,6 +24,12 @@
 //  SOFTWARE.
 //
 
+typedef NS_ENUM(NSInteger, ClusterTitleType) {
+    ClusterTitleTypeRequest,
+    ClusterTitleTypeDeny
+};
+
+
 #import "ClusterPrePermissions.h"
 
 #import <AddressBook/AddressBook.h>
@@ -69,12 +75,9 @@ static ClusterPrePermissions *__sharedInstance;
     if (requestTitle.length == 0) {
         requestTitle = @"Access Photos?";
     }
-    if (denyButtonTitle.length == 0) {
-        denyButtonTitle = @"Not Now";
-    }
-    if (grantButtonTitle.length == 0) {
-        grantButtonTitle = @"Give Access";
-    }
+    denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
+    grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
+
     ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
     if (status == ALAuthorizationStatusNotDetermined) {
         self.photoPermissionCompletionHandler = completionHandler;
@@ -147,12 +150,9 @@ static ClusterPrePermissions *__sharedInstance;
     if (requestTitle.length == 0) {
         requestTitle = @"Access Contacts?";
     }
-    if (denyButtonTitle.length == 0) {
-        denyButtonTitle = @"Not Now";
-    }
-    if (grantButtonTitle.length == 0) {
-        grantButtonTitle = @"Give Access";
-    }
+    denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
+    grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
+
     ABAuthorizationStatus status = ABAddressBookGetAuthorizationStatus();
     if (status == kABAuthorizationStatusNotDetermined) {
         self.contactPermissionCompletionHandler = completionHandler;
@@ -223,12 +223,9 @@ static ClusterPrePermissions *__sharedInstance;
     if (requestTitle.length == 0) {
         requestTitle = @"Access Location?";
     }
-    if (denyButtonTitle.length == 0) {
-        denyButtonTitle = @"Not Now";
-    }
-    if (grantButtonTitle.length == 0) {
-        grantButtonTitle = @"Give Access";
-    }
+    denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
+    grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
+
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     if (status == kCLAuthorizationStatusNotDetermined) {
         self.locationPermissionCompletionHandler = completionHandler;
@@ -328,6 +325,24 @@ static ClusterPrePermissions *__sharedInstance;
             [self showActualLocationPermissionAlert];
         }
     }
+}
+
+#pragma mark - Titles
+
+- (NSString *)titleFor:(ClusterTitleType)titleType fromTitle:(NSString *)title
+{
+    switch (titleType) {
+        case ClusterTitleTypeDeny:
+            title = (title.length == 0) ? @"Not Now" : title;
+            break;
+        case ClusterTitleTypeRequest:
+            title = (title.length == 0) ? @"Give Access" : title;
+            break;
+        default:
+            title = @"";
+            break;
+    }
+    return title;
 }
 
 @end
