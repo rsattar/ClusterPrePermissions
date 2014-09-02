@@ -48,6 +48,8 @@ typedef NS_ENUM(NSInteger, ClusterTitleType) {
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler locationPermissionCompletionHandler;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 
+@property (assign, nonatomic) ClusterLocationAuthorizationType locationAuthorizationType;
+
 @end
 
 static ClusterPrePermissions *__sharedInstance;
@@ -214,11 +216,27 @@ static ClusterPrePermissions *__sharedInstance;
 #pragma mark - Location Permission Help
 
 
+
 - (void) showLocationPermissionsWithTitle:(NSString *)requestTitle
                                   message:(NSString *)message
                           denyButtonTitle:(NSString *)denyButtonTitle
                          grantButtonTitle:(NSString *)grantButtonTitle
                         completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
+    [self showLocationPermissionsForAuthorizationType:ClusterLocationAuthorizationTypeAlways
+                                                title:requestTitle
+                                              message:message
+                                      denyButtonTitle:denyButtonTitle
+                                     grantButtonTitle:grantButtonTitle
+                                    completionHandler:completionHandler];
+}
+
+- (void) showLocationPermissionsForAuthorizationType:(ClusterLocationAuthorizationType)authorizationType
+                                               title:(NSString *)requestTitle
+                                             message:(NSString *)message
+                                     denyButtonTitle:(NSString *)denyButtonTitle
+                                    grantButtonTitle:(NSString *)grantButtonTitle
+                                   completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
     if (requestTitle.length == 0) {
         requestTitle = @"Access Location?";
@@ -229,6 +247,7 @@ static ClusterPrePermissions *__sharedInstance;
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     if (status == kCLAuthorizationStatusNotDetermined) {
         self.locationPermissionCompletionHandler = completionHandler;
+        self.locationAuthorizationType = authorizationType;
         self.preLocationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
                                                                          message:message
                                                                         delegate:self
@@ -249,6 +268,16 @@ static ClusterPrePermissions *__sharedInstance;
 {
     self.locationManager = [[CLLocationManager alloc] init];
     self.locationManager.delegate = self;
+    
+    if (self.locationAuthorizationType == ClusterLocationAuthorizationTypeAlways &&
+        [self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+        [self.locationManager requestAlwaysAuthorization];
+    } else
+    if (self.locationAuthorizationType == ClusterLocationAuthorizationTypeWhenInUse &&
+        [self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+        [self.locationManager requestWhenInUseAuthorization];
+    }
+
     [self.locationManager startUpdatingLocation];
 }
 
