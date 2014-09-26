@@ -46,6 +46,18 @@ typedef NS_ENUM(NSInteger, ClusterDialogResult) {
 };
 
 /**
+ * Authorization methods for the usage of location services.
+ */
+typedef NS_ENUM(NSInteger, ClusterLocationAuthorizationType) {
+    /// the “when-in-use” authorization grants the app to start most
+    /// (but not all) location services while it is in the foreground.
+    ClusterLocationAuthorizationTypeWhenInUse,
+    /// the “always” authorization grants the app to start all
+    /// location services
+    ClusterLocationAuthorizationTypeAlways,
+};
+
+/**
  * General callback for permissions. 
  * @param hasPermission Returns YES if system permission was granted 
  *                      or is already available, NO otherwise.
@@ -80,5 +92,12 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
                           denyButtonTitle:(NSString *)denyButtonTitle
                          grantButtonTitle:(NSString *)grantButtonTitle
                         completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+
+- (void) showLocationPermissionsForAuthorizationType:(ClusterLocationAuthorizationType)authorizationType
+                                               title:(NSString *)requestTitle
+                                             message:(NSString *)message
+                                     denyButtonTitle:(NSString *)denyButtonTitle
+                                    grantButtonTitle:(NSString *)grantButtonTitle
+                                   completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 @end

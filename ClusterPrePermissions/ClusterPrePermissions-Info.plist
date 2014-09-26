@@ -24,6 +24,10 @@
 	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app uses your location even in background ...</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app uses your location when in use ...</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

@@ -48,6 +48,8 @@ typedef NS_ENUM(NSInteger, ClusterTitleType) {
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler locationPermissionCompletionHandler;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 
+@property (assign, nonatomic) ClusterLocationAuthorizationType locationAuthorizationType;
+
 @end
 
 static ClusterPrePermissions *__sharedInstance;
@@ -77,7 +79,7 @@ static ClusterPrePermissions *__sharedInstance;
     }
     denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
+    
     ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
     if (status == ALAuthorizationStatusNotDetermined) {
         self.photoPermissionCompletionHandler = completionHandler;
@@ -152,7 +154,7 @@ static ClusterPrePermissions *__sharedInstance;
     }
     denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
+    
     ABAuthorizationStatus status = ABAddressBookGetAuthorizationStatus();
     if (status == kABAuthorizationStatusNotDetermined) {
         self.contactPermissionCompletionHandler = completionHandler;
@@ -214,21 +216,38 @@ static ClusterPrePermissions *__sharedInstance;
 #pragma mark - Location Permission Help
 
 
+
 - (void) showLocationPermissionsWithTitle:(NSString *)requestTitle
                                   message:(NSString *)message
                           denyButtonTitle:(NSString *)denyButtonTitle
                          grantButtonTitle:(NSString *)grantButtonTitle
                         completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
+    [self showLocationPermissionsForAuthorizationType:ClusterLocationAuthorizationTypeAlways
+                                                title:requestTitle
+                                              message:message
+                                      denyButtonTitle:denyButtonTitle
+                                     grantButtonTitle:grantButtonTitle
+                                    completionHandler:completionHandler];
+}
+
+- (void) showLocationPermissionsForAuthorizationType:(ClusterLocationAuthorizationType)authorizationType
+                                               title:(NSString *)requestTitle
+                                             message:(NSString *)message
+                                     denyButtonTitle:(NSString *)denyButtonTitle
+                                    grantButtonTitle:(NSString *)grantButtonTitle
+                                   completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
     if (requestTitle.length == 0) {
         requestTitle = @"Access Location?";
     }
     denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
+    
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     if (status == kCLAuthorizationStatusNotDetermined) {
         self.locationPermissionCompletionHandler = completionHandler;
+        self.locationAuthorizationType = authorizationType;
         self.preLocationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
                                                                          message:message
                                                                         delegate:self
@@ -237,7 +256,7 @@ static ClusterPrePermissions *__sharedInstance;
         [self.preLocationPermissionAlertView show];
     } else {
         if (completionHandler) {
-            completionHandler((status == kCLAuthorizationStatusAuthorized),
+            completionHandler(([self locationAuthorizationStatusPermitsAccess:status]),
                               ClusterDialogResultNoActionTaken,
                               ClusterDialogResultNoActionTaken);
         }
@@ -249,6 +268,16 @@ static ClusterPrePermissions *__sharedInstance;
 {
     self.locationManager = [[CLLocationManager alloc] init];
     self.locationManager.delegate = self;
+    
+    if (self.locationAuthorizationType == ClusterLocationAuthorizationTypeAlways &&
+        [self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+        [self.locationManager requestAlwaysAuthorization];
+    } else
+        if (self.locationAuthorizationType == ClusterLocationAuthorizationTypeWhenInUse &&
+            [self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+            [self.locationManager requestWhenInUseAuthorization];
+        }
+    
     [self.locationManager startUpdatingLocation];
 }
 
@@ -262,7 +291,7 @@ static ClusterPrePermissions *__sharedInstance;
         if (status == kCLAuthorizationStatusNotDetermined) {
             userDialogResult = ClusterDialogResultDenied;
             systemDialogResult = ClusterDialogResultNoActionTaken;
-        } else if (status == kCLAuthorizationStatusAuthorized) {
+        } else if ([self locationAuthorizationStatusPermitsAccess:status]) {
             userDialogResult = ClusterDialogResultGranted;
             systemDialogResult = ClusterDialogResultGranted;
         } else if (status == kCLAuthorizationStatusDenied) {
@@ -272,7 +301,7 @@ static ClusterPrePermissions *__sharedInstance;
             userDialogResult = ClusterDialogResultGranted;
             systemDialogResult = ClusterDialogResultParentallyRestricted;
         }
-        self.locationPermissionCompletionHandler((status == kCLAuthorizationStatusAuthorized),
+        self.locationPermissionCompletionHandler(([self locationAuthorizationStatusPermitsAccess:status]),
                                                  userDialogResult,
                                                  systemDialogResult);
         self.locationPermissionCompletionHandler = nil;
@@ -282,6 +311,12 @@ static ClusterPrePermissions *__sharedInstance;
     }
 }
 
+- (BOOL)locationAuthorizationStatusPermitsAccess:(CLAuthorizationStatus)authorizationStatus
+{
+    return authorizationStatus == kCLAuthorizationStatusAuthorized ||
+    authorizationStatus == kCLAuthorizationStatusAuthorizedAlways ||
+    authorizationStatus == kCLAuthorizationStatusAuthorizedWhenInUse;
+}
 
 #pragma mark CLLocationManagerDelegate
 
@@ -306,7 +341,7 @@ static ClusterPrePermissions *__sharedInstance;
             // User granted access, now show the REAL permissions dialog
             [self showActualPhotoPermissionAlert];
         }
-
+        
         self.prePhotoPermissionAlertView = nil;
     } else if (alertView == self.preContactPermissionAlertView) {
         if (buttonIndex == alertView.cancelButtonIndex) {
