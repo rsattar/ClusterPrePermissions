@@ -35,6 +35,7 @@ typedef NS_ENUM(NSInteger, ClusterTitleType) {
 #import <AddressBook/AddressBook.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <CoreLocation/CoreLocation.h>
+#import <EventKit/EventKit.h>
 
 @interface ClusterPrePermissions () <UIAlertViewDelegate, CLLocationManagerDelegate>
 
@@ -47,6 +48,9 @@ typedef NS_ENUM(NSInteger, ClusterTitleType) {
 @property (strong, nonatomic) UIAlertView *preLocationPermissionAlertView;
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler locationPermissionCompletionHandler;
 @property (strong, nonatomic) CLLocationManager *locationManager;
+
+@property (strong, nonatomic) UIAlertView *preCalendarPermissionAlertView;
+@property (copy, nonatomic) ClusterPrePermissionCompletionHandler calendarPermissionCompletionHandler;
 
 @property (assign, nonatomic) ClusterLocationAuthorizationType locationAuthorizationType;
 
@@ -318,6 +322,74 @@ static ClusterPrePermissions *__sharedInstance;
     authorizationStatus == kCLAuthorizationStatusAuthorizedWhenInUse;
 }
 
+#pragma mark - Calendar Permissions Help
+
+- (void) showCalendarPermissionsWithTitle:(NSString *)requestTitle
+                                  message:(NSString *)message
+                          denyButtonTitle:(NSString *)denyButtonTitle
+                         grantButtonTitle:(NSString *)grantButtonTitle
+                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
+    if (requestTitle.length == 0) {
+        requestTitle = @"Access Calendar?";
+    }
+    denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
+    grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
+    
+    EKAuthorizationStatus status = [EKEventStore authorizationStatusForEntityType:EKEntityTypeEvent];
+    if (status == EKAuthorizationStatusNotDetermined) {
+        self.calendarPermissionCompletionHandler = completionHandler;
+        self.preCalendarPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                         message:message
+                                                                        delegate:self
+                                                               cancelButtonTitle:denyButtonTitle
+                                                               otherButtonTitles:grantButtonTitle, nil];
+        [self.preCalendarPermissionAlertView show];
+    } else {
+        if (completionHandler) {
+            completionHandler((status == EKAuthorizationStatusAuthorized),
+                              ClusterDialogResultNoActionTaken,
+                              ClusterDialogResultNoActionTaken);
+        }
+    }
+}
+
+
+- (void) showActualCalendarPermissionAlert
+{
+    EKEventStore *eventStore = [[EKEventStore alloc] init];
+    [eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
+        [self fireCalendarPermissionCompletionHandler];
+    }];
+}
+
+
+- (void) fireCalendarPermissionCompletionHandler
+{
+    EKAuthorizationStatus status = [EKEventStore authorizationStatusForEntityType:EKEntityTypeEvent];
+    if (self.calendarPermissionCompletionHandler) {
+        ClusterDialogResult userDialogResult = ClusterDialogResultGranted;
+        ClusterDialogResult systemDialogResult = ClusterDialogResultGranted;
+        if (status == EKAuthorizationStatusNotDetermined) {
+            userDialogResult = ClusterDialogResultDenied;
+            systemDialogResult = ClusterDialogResultNoActionTaken;
+        } else if (status == EKAuthorizationStatusAuthorized) {
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultGranted;
+        } else if (status == EKAuthorizationStatusDenied) {
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultDenied;
+        } else if (status == EKAuthorizationStatusRestricted) {
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultParentallyRestricted;
+        }
+        self.calendarPermissionCompletionHandler((status == ALAuthorizationStatusAuthorized),
+                                                 userDialogResult,
+                                                 systemDialogResult);
+        self.calendarPermissionCompletionHandler = nil;
+    }
+}
+
 #pragma mark CLLocationManagerDelegate
 
 - (void) locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
@@ -358,6 +430,14 @@ static ClusterPrePermissions *__sharedInstance;
         } else {
             // User granted access, now try to trigger the real location access
             [self showActualLocationPermissionAlert];
+        }
+    } else if (alertView == self.preCalendarPermissionAlertView) {
+        if (buttonIndex == alertView.cancelButtonIndex) {
+            // User said NO, that jerk.
+            [self fireCalendarPermissionCompletionHandler];
+        } else {
+            // User granted access, now try to trigger the real location access
+            [self showActualCalendarPermissionAlert];
         }
     }
 }

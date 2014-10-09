@@ -100,4 +100,11 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
                                     grantButtonTitle:(NSString *)grantButtonTitle
                                    completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
+- (void) showCalendarPermissionsWithTitle:(NSString *)requestTitle
+                                  message:(NSString *)message
+                          denyButtonTitle:(NSString *)denyButtonTitle
+                         grantButtonTitle:(NSString *)grantButtonTitle
+                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+
+
 @end
