@@ -14,6 +14,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *photoPermissionResultLabel;
 @property (strong, nonatomic) IBOutlet UILabel *contactsPermissionResultLabel;
 @property (strong, nonatomic) IBOutlet UILabel *locationPermissionResultLabel;
+@property (strong, nonatomic) IBOutlet UILabel *calendarPermissionResultLabel;
 
 @end
 
@@ -89,6 +90,23 @@
                                            userDialogResult:userDialogResult
                                          systemDialogResult:systemDialogResult];
                                 }];
+}
+
+- (IBAction)onCalendarPermissionsButtonTapped:(id)sender
+{
+    ClusterPrePermissions *permissions = [ClusterPrePermissions sharedPermissions];
+    [permissions showCalendarPermissionsWithTitle:@"Access your calendar?"
+                                       message:@"Your message here"
+                               denyButtonTitle:@"Not Now"
+                              grantButtonTitle:@"Give Access"
+                             completionHandler:^(BOOL hasPermission,
+                                                 ClusterDialogResult userDialogResult,
+                                                 ClusterDialogResult systemDialogResult) {
+                                 [self updateResultLabel:self.calendarPermissionResultLabel
+                                          withPermission:hasPermission
+                                        userDialogResult:userDialogResult
+                                      systemDialogResult:systemDialogResult];
+                             }];
 }
 
 
