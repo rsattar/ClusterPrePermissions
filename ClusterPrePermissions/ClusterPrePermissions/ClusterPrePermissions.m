@@ -69,6 +69,80 @@ static ClusterPrePermissions *__sharedInstance;
     return __sharedInstance;
 }
 
++ (ClusterAuthorizationStatus) photoPermissionAuthorizationStatus
+{
+    int status = [ALAssetsLibrary authorizationStatus];
+    switch (status) {
+        case ALAuthorizationStatusAuthorized:
+            return ClusterAuthorizationStatusAuthorized;
+            
+        case ALAuthorizationStatusDenied:
+            return ClusterAuthorizationStatusDenied;
+            
+        case ALAuthorizationStatusRestricted:
+            return ClusterAuthorizationStatusRestricted;
+            
+        default:
+            return ClusterAuthorizationStatusUnDetermined;
+    }
+}
+
++ (ClusterAuthorizationStatus) contactsPermissionAuthorizationStatus
+{
+    int status = ABAddressBookGetAuthorizationStatus();
+    switch (status) {
+        case kABAuthorizationStatusAuthorized:
+            return ClusterAuthorizationStatusAuthorized;
+            
+        case kABAuthorizationStatusDenied:
+            return ClusterAuthorizationStatusDenied;
+            
+        case kABAuthorizationStatusRestricted:
+            return ClusterAuthorizationStatusRestricted;
+            
+        default:
+            return ClusterAuthorizationStatusUnDetermined;
+    }
+}
+
++ (ClusterAuthorizationStatus) eventPermissionAuthorizationStatus:(ClusterEventAuthorizationType)eventType
+{
+    int status = [EKEventStore authorizationStatusForEntityType:
+                  [[ClusterPrePermissions sharedPermissions] EKEquivalentEventType:eventType]];
+    switch (status) {
+        case EKAuthorizationStatusAuthorized:
+            return ClusterAuthorizationStatusAuthorized;
+            
+        case EKAuthorizationStatusDenied:
+            return ClusterAuthorizationStatusDenied;
+            
+        case EKAuthorizationStatusRestricted:
+            return ClusterAuthorizationStatusRestricted;
+            
+        default:
+            return ClusterAuthorizationStatusUnDetermined;
+    }
+}
+
++ (ClusterAuthorizationStatus) locationPermissionAuthorizationStatus
+{
+    int status = [CLLocationManager authorizationStatus];
+    switch (status) {
+        case kCLAuthorizationStatusAuthorizedAlways:
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+            return ClusterAuthorizationStatusAuthorized;
+            
+        case kCLAuthorizationStatusDenied:
+            return ClusterAuthorizationStatusDenied;
+            
+        case kCLAuthorizationStatusRestricted:
+            return ClusterAuthorizationStatusRestricted;
+            
+        default:
+            return ClusterAuthorizationStatusUnDetermined;
+    }
+}
+
 
 #pragma mark - Photo Permissions Help
 
