@@ -58,6 +58,16 @@ typedef NS_ENUM(NSInteger, ClusterLocationAuthorizationType) {
 };
 
 /**
+ * Authorization methods for the usage of event services.
+ */
+typedef NS_ENUM(NSInteger, ClusterEventAuthorizationType) {
+    /// Authorization for events only
+    ClusterEventAuthorizationTypeEvent,
+    /// Authorization for reminders only
+    ClusterEventAuthorizationTypeReminder
+};
+
+/**
  * General callback for permissions. 
  * @param hasPermission Returns YES if system permission was granted 
  *                      or is already available, NO otherwise.
@@ -82,6 +92,13 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
                      completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 - (void) showContactsPermissionsWithTitle:(NSString *)requestTitle
+                                  message:(NSString *)message
+                          denyButtonTitle:(NSString *)denyButtonTitle
+                         grantButtonTitle:(NSString *)grantButtonTitle
+                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+
+- (void) showEventPermissionsWithType:(ClusterEventAuthorizationType)eventType
+                                Title:(NSString *)requestTitle
                                   message:(NSString *)message
                           denyButtonTitle:(NSString *)denyButtonTitle
                          grantButtonTitle:(NSString *)grantButtonTitle
