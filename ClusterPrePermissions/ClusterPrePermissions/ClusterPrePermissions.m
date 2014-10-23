@@ -31,9 +31,9 @@ typedef NS_ENUM(NSInteger, ClusterTitleType) {
 
 
 #import "ClusterPrePermissions.h"
-
 #import <AddressBook/AddressBook.h>
 #import <AssetsLibrary/AssetsLibrary.h>
+#import <AVFoundation/AVFoundation.h>
 #import <CoreLocation/CoreLocation.h>
 
 @interface ClusterPrePermissions () <UIAlertViewDelegate, CLLocationManagerDelegate>
@@ -43,6 +43,9 @@ typedef NS_ENUM(NSInteger, ClusterTitleType) {
 
 @property (strong, nonatomic) UIAlertView *preContactPermissionAlertView;
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler contactPermissionCompletionHandler;
+
+@property (strong, nonatomic) UIAlertView *preCameraPermissionAlertView;
+@property (copy, nonatomic) ClusterPrePermissionCompletionHandler cameraPermissionCompletionHandler;
 
 @property (strong, nonatomic) UIAlertView *preLocationPermissionAlertView;
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler locationPermissionCompletionHandler;
@@ -63,6 +66,74 @@ static ClusterPrePermissions *__sharedInstance;
         __sharedInstance = [[ClusterPrePermissions alloc] init];
     });
     return __sharedInstance;
+}
+
+- (void) showCameraPermissionsWithTitle:(NSString *)requestTitle
+                                message:(NSString *)message
+                        denyButtonTitle:(NSString *)denyButtonTitle
+                       grantButtonTitle:(NSString *)grantButtonTitle
+                      completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler {
+    if (requestTitle.length == 0) {
+        requestTitle = @"Access Camera?";
+    }
+    denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
+    grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
+//    + (AVAuthorizationStatus)authorizationStatusForMediaType:(NSString *)mediaType
+    AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    // This status is normally not visible—the AVCaptureDevice class methods for discovering devices do not return devices the user is restricted from accessing.
+    // Explicit user permission is required for media capture, but the user has not yet granted or denied such permission.
+    if(status == AVAuthorizationStatusNotDetermined){
+        self.cameraPermissionCompletionHandler = completionHandler;
+        self.preCameraPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                       message:message
+                                                                      delegate:self
+                                                             cancelButtonTitle:denyButtonTitle
+                                                             otherButtonTitles:grantButtonTitle, nil];
+        [self.preCameraPermissionAlertView show];
+    }
+    else {
+        if (completionHandler) {
+            completionHandler((status == AVAuthorizationStatusAuthorized),
+                              ClusterDialogResultNoActionTaken,
+                              ClusterDialogResultNoActionTaken);
+        }
+    }
+}
+
+- (void) showActualCameraPermissionAlert
+{
+    [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self fireCameraPermissionCompletionHandler];
+        });
+    }];
+}
+
+
+- (void) fireCameraPermissionCompletionHandler
+{
+    AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if (self.cameraPermissionCompletionHandler) {
+        ClusterDialogResult userDialogResult = ClusterDialogResultGranted;
+        ClusterDialogResult systemDialogResult = ClusterDialogResultGranted;
+        if (status == AVAuthorizationStatusNotDetermined) {
+            userDialogResult = ClusterDialogResultDenied;
+            systemDialogResult = ClusterDialogResultNoActionTaken;
+        } else if (status == AVAuthorizationStatusAuthorized) {
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultGranted;
+        } else if (status == AVAuthorizationStatusDenied) {
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultDenied;
+        } else if (status == AVAuthorizationStatusRestricted) {
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultParentallyRestricted;
+        }
+        self.cameraPermissionCompletionHandler((status == AVAuthorizationStatusAuthorized),
+                                                userDialogResult,
+                                                systemDialogResult);
+        self.cameraPermissionCompletionHandler = nil;
+    }
 }
 
 
@@ -358,6 +429,14 @@ static ClusterPrePermissions *__sharedInstance;
         } else {
             // User granted access, now try to trigger the real location access
             [self showActualLocationPermissionAlert];
+        }
+    } else if (alertView == self.preCameraPermissionAlertView) {
+        if (buttonIndex == alertView.cancelButtonIndex) {
+            // User said NO, that jerk.
+            [self fireCameraPermissionCompletionHandler];
+        } else {
+            // User granted access, now try to trigger the real camera access
+            [self showActualCameraPermissionAlert];
         }
     }
 }
