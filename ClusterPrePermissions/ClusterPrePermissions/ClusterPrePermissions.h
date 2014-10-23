@@ -58,22 +58,29 @@ typedef NS_ENUM(NSInteger, ClusterLocationAuthorizationType) {
 };
 
 /**
- * General callback for permissions. 
- * @param hasPermission Returns YES if system permission was granted 
+ * General callback for permissions.
+ * @param hasPermission Returns YES if system permission was granted
  *                      or is already available, NO otherwise.
- * @param userDialogResult Describes whether the user granted/denied access, 
- *                         or if the user didn't have an opportunity to take action. 
+ * @param userDialogResult Describes whether the user granted/denied access,
+ *                         or if the user didn't have an opportunity to take action.
  *                         ClusterDialogResultParentallyRestricted is never returned.
- * @param systemDialogResult Describes whether the user granted/denied access, 
- *                           or was parentally restricted, or if the user didn't 
+ * @param systemDialogResult Describes whether the user granted/denied access,
+ *                           or was parentally restricted, or if the user didn't
  *                           have an opportunity to take action.
  * @see ClusterDialogResult
  */
 typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
-                                              ClusterDialogResult userDialogResult,
-                                              ClusterDialogResult systemDialogResult);
+                                                      ClusterDialogResult userDialogResult,
+                                                      ClusterDialogResult systemDialogResult);
 
 + (instancetype) sharedPermissions;
+
+- (void) showCameraPermissionsWithTitle:(NSString *)requestTitle
+                                message:(NSString *)message
+                        denyButtonTitle:(NSString *)denyButtonTitle
+                       grantButtonTitle:(NSString *)grantButtonTitle
+                      completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+
 
 - (void) showPhotoPermissionsWithTitle:(NSString *)requestTitle
                                message:(NSString *)message
