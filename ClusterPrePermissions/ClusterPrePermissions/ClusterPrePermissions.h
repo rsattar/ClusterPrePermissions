@@ -46,6 +46,20 @@ typedef NS_ENUM(NSInteger, ClusterDialogResult) {
 };
 
 /**
+ * A general descriptor for the possible outcomes of Authorization Status.
+ */
+typedef NS_ENUM(NSInteger, ClusterAuthorizationStatus) {
+    /// Permission status undetermined.
+    ClusterAuthorizationStatusUnDetermined,
+    /// Permission denied.
+    ClusterAuthorizationStatusDenied,
+    /// Permission authorized.
+    ClusterAuthorizationStatusAuthorized,
+    /// The iOS parental permissions prevented access.
+    ClusterAuthorizationStatusRestricted
+};
+
+/**
  * Authorization methods for the usage of location services.
  */
 typedef NS_ENUM(NSInteger, ClusterLocationAuthorizationType) {
@@ -55,6 +69,16 @@ typedef NS_ENUM(NSInteger, ClusterLocationAuthorizationType) {
     /// the “always” authorization grants the app to start all
     /// location services
     ClusterLocationAuthorizationTypeAlways,
+};
+
+/**
+ * Authorization methods for the usage of event services.
+ */
+typedef NS_ENUM(NSInteger, ClusterEventAuthorizationType) {
+    /// Authorization for events only
+    ClusterEventAuthorizationTypeEvent,
+    /// Authorization for reminders only
+    ClusterEventAuthorizationTypeReminder
 };
 
 /**
@@ -75,6 +99,12 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
 
 + (instancetype) sharedPermissions;
 
++ (ClusterAuthorizationStatus) photoPermissionAuthorizationStatus;
++ (ClusterAuthorizationStatus) contactsPermissionAuthorizationStatus;
++ (ClusterAuthorizationStatus) eventPermissionAuthorizationStatus:(ClusterEventAuthorizationType)eventType;
++ (ClusterAuthorizationStatus) locationPermissionAuthorizationStatus;
+
+
 - (void) showPhotoPermissionsWithTitle:(NSString *)requestTitle
                                message:(NSString *)message
                        denyButtonTitle:(NSString *)denyButtonTitle
@@ -82,6 +112,13 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
                      completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 - (void) showContactsPermissionsWithTitle:(NSString *)requestTitle
+                                  message:(NSString *)message
+                          denyButtonTitle:(NSString *)denyButtonTitle
+                         grantButtonTitle:(NSString *)grantButtonTitle
+                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+
+- (void) showEventPermissionsWithType:(ClusterEventAuthorizationType)eventType
+                                Title:(NSString *)requestTitle
                                   message:(NSString *)message
                           denyButtonTitle:(NSString *)denyButtonTitle
                          grantButtonTitle:(NSString *)grantButtonTitle
