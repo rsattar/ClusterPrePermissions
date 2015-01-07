@@ -14,6 +14,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *photoPermissionResultLabel;
 @property (strong, nonatomic) IBOutlet UILabel *contactsPermissionResultLabel;
 @property (strong, nonatomic) IBOutlet UILabel *locationPermissionResultLabel;
+@property (strong, nonatomic) IBOutlet UILabel *pushNotificationPermissionResultLabel;
 
 @end
 
@@ -90,6 +91,24 @@
                                          systemDialogResult:systemDialogResult];
                                 }];
 }
+
+- (IBAction)onPushNotificationPermissionsButtonTapped:(id)sender
+{
+    ClusterPrePermissions *permissions = [ClusterPrePermissions sharedPermissions];
+    [permissions showPushNotificationPermissionsWithTitle:@"Enable push notifications?"
+                                                  message:@"Your message here"
+                                          denyButtonTitle:@"Not Now"
+                                         grantButtonTitle:@"Enable"
+                                        completionHandler:^(BOOL hasPermission,
+                                                            ClusterDialogResult userDialogResult,
+                                                            ClusterDialogResult systemDialogResult) {
+                                            [self updateResultLabel:self.pushNotificationPermissionResultLabel
+                                                     withPermission:hasPermission
+                                                   userDialogResult:userDialogResult
+                                                 systemDialogResult:systemDialogResult];
+                                        }];
+}
+
 
 
 - (void) updateResultLabel:(UILabel *)resultLabel
