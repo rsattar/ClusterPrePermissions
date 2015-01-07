@@ -103,6 +103,7 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
 + (ClusterAuthorizationStatus) contactsPermissionAuthorizationStatus;
 + (ClusterAuthorizationStatus) eventPermissionAuthorizationStatus:(ClusterEventAuthorizationType)eventType;
 + (ClusterAuthorizationStatus) locationPermissionAuthorizationStatus;
++ (ClusterAuthorizationStatus) pushNotificationPermissionAuthorizationStatus;
 
 
 - (void) showPhotoPermissionsWithTitle:(NSString *)requestTitle
@@ -136,5 +137,11 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
                                      denyButtonTitle:(NSString *)denyButtonTitle
                                     grantButtonTitle:(NSString *)grantButtonTitle
                                    completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+
+- (void) showPushNotificationPermissionsWithTitle:(NSString *)requestTitle
+                                          message:(NSString *)message
+                                  denyButtonTitle:(NSString *)denyButtonTitle
+                                 grantButtonTitle:(NSString *)grantButtonTitle
+                                completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 @end
