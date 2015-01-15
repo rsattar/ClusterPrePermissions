@@ -36,8 +36,12 @@ typedef NS_ENUM(NSInteger, ClusterTitleType) {
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <EventKit/EventKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import <AVFoundation/AVFoundation.h>
 
 @interface ClusterPrePermissions () <UIAlertViewDelegate, CLLocationManagerDelegate>
+
+@property (strong, nonatomic) UIAlertView *preAVPermissionAlertView;
+@property (copy, nonatomic) ClusterPrePermissionCompletionHandler avPermissionCompletionHandler;
 
 @property (strong, nonatomic) UIAlertView *prePhotoPermissionAlertView;
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler photoPermissionCompletionHandler;
@@ -54,6 +58,23 @@ typedef NS_ENUM(NSInteger, ClusterTitleType) {
 
 @property (assign, nonatomic) ClusterLocationAuthorizationType locationAuthorizationType;
 
++ (ClusterAuthorizationStatus) AVPermissionAuthorizationStatusForMediaType:(NSString*)mediaType;
+- (void) showActualAVPermissionAlertWithType:(ClusterAVAuthorizationType)mediaType;
+- (void) showActualPhotoPermissionAlert;
+- (void) showActualContactPermissionAlert;
+- (void) showActualEventPermissionAlert:(ClusterEventAuthorizationType)eventType;
+- (void) showActualLocationPermissionAlert;
+
+- (void) fireAVPermissionCompletionHandlerWithType:(ClusterAVAuthorizationType)mediaType;
+- (NSString*)AVEquivalentMediaType:(ClusterAVAuthorizationType)mediaType;
+- (void) firePhotoPermissionCompletionHandler;
+- (void) fireContactPermissionCompletionHandler;
+- (void) fireEventPermissionCompletionHandler:(ClusterEventAuthorizationType)eventType;
+- (void) fireLocationPermissionCompletionHandler;
+- (NSUInteger)EKEquivalentEventType:(ClusterEventAuthorizationType)eventType;
+- (BOOL)locationAuthorizationStatusPermitsAccess:(CLAuthorizationStatus)authorizationStatus;
+- (NSString *)titleFor:(ClusterTitleType)titleType fromTitle:(NSString *)title;
+
 @end
 
 static ClusterPrePermissions *__sharedInstance;
@@ -67,6 +88,34 @@ static ClusterPrePermissions *__sharedInstance;
         __sharedInstance = [[ClusterPrePermissions alloc] init];
     });
     return __sharedInstance;
+}
+
++ (ClusterAuthorizationStatus) AVPermissionAuthorizationStatusForMediaType:(NSString*)mediaType
+{
+    int status = [AVCaptureDevice authorizationStatusForMediaType:mediaType];
+    switch (status) {
+        case AVAuthorizationStatusAuthorized:
+            return ClusterAuthorizationStatusAuthorized;
+            
+        case AVAuthorizationStatusDenied:
+            return ClusterAuthorizationStatusDenied;
+            
+        case AVAuthorizationStatusRestricted:
+            return ClusterAuthorizationStatusRestricted;
+            
+        default:
+            return ClusterAuthorizationStatusUnDetermined;
+    }
+}
+
++ (ClusterAuthorizationStatus) cameraPermissionAuthorizationStatus
+{
+    return [ClusterPrePermissions AVPermissionAuthorizationStatusForMediaType:AVMediaTypeVideo];
+}
+
++ (ClusterAuthorizationStatus) microphonePermissionAuthorizationStatus
+{
+    return [ClusterPrePermissions AVPermissionAuthorizationStatusForMediaType:AVMediaTypeAudio];
 }
 
 + (ClusterAuthorizationStatus) photoPermissionAuthorizationStatus
@@ -143,6 +192,116 @@ static ClusterPrePermissions *__sharedInstance;
     }
 }
 
+#pragma mark - AV Permissions Help
+
+- (void) showAVPermissionsWithType:(ClusterAVAuthorizationType)mediaType
+                             title:(NSString *)requestTitle
+                           message:(NSString *)message
+                   denyButtonTitle:(NSString *)denyButtonTitle
+                  grantButtonTitle:(NSString *)grantButtonTitle
+                 completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
+    if (requestTitle.length == 0) {
+        switch (mediaType) {
+            case ClusterAVAuthorizationTypeCamera:
+                requestTitle = @"Access Camera?";
+                break;
+            
+            default:
+                requestTitle = @"Access Microphone?";
+                break;
+        }
+    }
+    denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
+    grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
+    
+    AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if (status == AVAuthorizationStatusNotDetermined) {
+        self.avPermissionCompletionHandler = completionHandler;
+        self.preAVPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                   message:message
+                                                                  delegate:self
+                                                         cancelButtonTitle:denyButtonTitle
+                                                         otherButtonTitles:grantButtonTitle, nil];
+        self.preAVPermissionAlertView.tag = mediaType;
+        [self.preAVPermissionAlertView show];
+    } else {
+        if (completionHandler) {
+            completionHandler((status == AVAuthorizationStatusAuthorized),
+                              ClusterDialogResultNoActionTaken,
+                              ClusterDialogResultNoActionTaken);
+        }
+    }
+}
+
+
+- (void) showCameraPermissionsWithTitle:(NSString *)requestTitle
+                                message:(NSString *)message
+                        denyButtonTitle:(NSString *)denyButtonTitle
+                       grantButtonTitle:(NSString *)grantButtonTitle
+                      completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
+    [self showAVPermissionsWithType:ClusterAVAuthorizationTypeCamera title:requestTitle message:message denyButtonTitle:denyButtonTitle grantButtonTitle:grantButtonTitle completionHandler:completionHandler];
+}
+
+
+- (void) showMicrophonePermissionsWithTitle:(NSString *)requestTitle
+                                    message:(NSString *)message
+                            denyButtonTitle:(NSString *)denyButtonTitle
+                           grantButtonTitle:(NSString *)grantButtonTitle
+                          completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
+    [self showAVPermissionsWithType:ClusterAVAuthorizationTypeMicrophone title:requestTitle message:message denyButtonTitle:denyButtonTitle grantButtonTitle:grantButtonTitle completionHandler:completionHandler];
+}
+
+
+- (void) showActualAVPermissionAlertWithType:(ClusterAVAuthorizationType)mediaType
+{
+    [AVCaptureDevice requestAccessForMediaType:[self AVEquivalentMediaType:mediaType]
+                             completionHandler:^(BOOL granted) {
+                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                        [self fireAVPermissionCompletionHandlerWithType:mediaType];
+                                    });
+                             }];
+}
+
+
+- (void) fireAVPermissionCompletionHandlerWithType:(ClusterAVAuthorizationType)mediaType
+{
+    AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:[self AVEquivalentMediaType:mediaType]];
+    if (self.avPermissionCompletionHandler) {
+        ClusterDialogResult userDialogResult = ClusterDialogResultGranted;
+        ClusterDialogResult systemDialogResult = ClusterDialogResultGranted;
+        if (status == AVAuthorizationStatusNotDetermined) {
+            userDialogResult = ClusterDialogResultDenied;
+            systemDialogResult = ClusterDialogResultNoActionTaken;
+        } else if (status == AVAuthorizationStatusAuthorized) {
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultGranted;
+        } else if (status == AVAuthorizationStatusDenied) {
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultDenied;
+        } else if (status == AVAuthorizationStatusRestricted) {
+            userDialogResult = ClusterDialogResultGranted;
+            systemDialogResult = ClusterDialogResultParentallyRestricted;
+        }
+        self.avPermissionCompletionHandler((status == AVAuthorizationStatusAuthorized),
+                                              userDialogResult,
+                                              systemDialogResult);
+        self.avPermissionCompletionHandler = nil;
+    }
+}
+
+
+- (NSString*)AVEquivalentMediaType:(ClusterAVAuthorizationType)mediaType
+{
+    if (mediaType == ClusterAVAuthorizationTypeCamera) {
+        return AVMediaTypeVideo;
+    }
+    else {
+        return AVMediaTypeAudio;
+    }
+}
 
 #pragma mark - Photo Permissions Help
 
@@ -500,7 +659,17 @@ static ClusterPrePermissions *__sharedInstance;
 
 - (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (alertView == self.prePhotoPermissionAlertView) {
+    if (alertView == self.preAVPermissionAlertView) {
+        if (buttonIndex == alertView.cancelButtonIndex) {
+            // User said NO, jerk.
+            [self fireAVPermissionCompletionHandlerWithType:alertView.tag];
+        } else {
+            // User granted access, now show the REAL permissions dialog
+            [self showActualAVPermissionAlertWithType:alertView.tag];
+        }
+        
+        self.preAVPermissionAlertView = nil;
+    } else if (alertView == self.prePhotoPermissionAlertView) {
         if (buttonIndex == alertView.cancelButtonIndex) {
             // User said NO, jerk.
             [self firePhotoPermissionCompletionHandler];

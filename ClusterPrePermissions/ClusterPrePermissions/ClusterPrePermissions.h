@@ -82,6 +82,16 @@ typedef NS_ENUM(NSInteger, ClusterEventAuthorizationType) {
 };
 
 /**
+ * Authorization methods for the usage of AV services.
+ */
+typedef NS_ENUM(NSInteger, ClusterAVAuthorizationType) {
+    /// Authorization for Camera only
+    ClusterAVAuthorizationTypeCamera,
+    /// Authorization for Microphone only
+    ClusterAVAuthorizationTypeMicrophone
+};
+
+/**
  * General callback for permissions. 
  * @param hasPermission Returns YES if system permission was granted 
  *                      or is already available, NO otherwise.
@@ -99,11 +109,31 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
 
 + (instancetype) sharedPermissions;
 
++ (ClusterAuthorizationStatus) cameraPermissionAuthorizationStatus;
++ (ClusterAuthorizationStatus) microphonePermissionAuthorizationStatus;
 + (ClusterAuthorizationStatus) photoPermissionAuthorizationStatus;
 + (ClusterAuthorizationStatus) contactsPermissionAuthorizationStatus;
 + (ClusterAuthorizationStatus) eventPermissionAuthorizationStatus:(ClusterEventAuthorizationType)eventType;
 + (ClusterAuthorizationStatus) locationPermissionAuthorizationStatus;
 
+- (void) showAVPermissionsWithType:(ClusterAVAuthorizationType)mediaType
+                             title:(NSString *)requestTitle
+                           message:(NSString *)message
+                   denyButtonTitle:(NSString *)denyButtonTitle
+                  grantButtonTitle:(NSString *)grantButtonTitle
+                completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+
+- (void) showCameraPermissionsWithTitle:(NSString *)requestTitle
+                                message:(NSString *)message
+                        denyButtonTitle:(NSString *)denyButtonTitle
+                       grantButtonTitle:(NSString *)grantButtonTitle
+                      completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+
+- (void) showMicrophonePermissionsWithTitle:(NSString *)requestTitle
+                                    message:(NSString *)message
+                            denyButtonTitle:(NSString *)denyButtonTitle
+                           grantButtonTitle:(NSString *)grantButtonTitle
+                          completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 - (void) showPhotoPermissionsWithTitle:(NSString *)requestTitle
                                message:(NSString *)message
