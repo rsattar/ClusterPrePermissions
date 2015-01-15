@@ -57,6 +57,7 @@ NSString *const ClusterPrePermissionsDidAskForPushNotifications = @"ClusterPrePe
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler pushNotificationPermissionCompletionHandler;
 
 @property (assign, nonatomic) ClusterLocationAuthorizationType locationAuthorizationType;
+@property (assign, nonatomic) ClusterPushNotificationType requestedPushNotificationTypes;
 
 @end
 
@@ -152,11 +153,21 @@ static ClusterPrePermissions *__sharedInstance;
     BOOL didAskForPermission = [[NSUserDefaults standardUserDefaults] boolForKey:ClusterPrePermissionsDidAskForPushNotifications];
     
     if (didAskForPermission) {
-        if ([[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
-            return ClusterAuthorizationStatusAuthorized;
+        if ([[UIApplication sharedApplication] respondsToSelector:@selector(isRegisteredForRemoteNotifications)]) {
+            // iOS8+
+            if ([[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
+                return ClusterAuthorizationStatusAuthorized;
+            } else {
+                return ClusterAuthorizationStatusDenied;
+            }
         } else {
-            return ClusterAuthorizationStatusDenied;
+            if ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] == UIRemoteNotificationTypeNone) {
+                return ClusterAuthorizationStatusDenied;
+            } else {
+                return ClusterAuthorizationStatusAuthorized;
+            }
         }
+        
     } else {
         return ClusterAuthorizationStatusUnDetermined;
     }
@@ -515,7 +526,8 @@ static ClusterPrePermissions *__sharedInstance;
 
 #pragma mark - Push Notification Permissions Help
 
-- (void) showPushNotificationPermissionsWithTitle:(NSString *)requestTitle
+- (void) showPushNotificationPermissionsWithType:(ClusterPushNotificationType)requestedType
+                                           title:(NSString *)requestTitle
                                           message:(NSString *)message
                                   denyButtonTitle:(NSString *)denyButtonTitle
                                  grantButtonTitle:(NSString *)grantButtonTitle
@@ -530,6 +542,7 @@ static ClusterPrePermissions *__sharedInstance;
     ClusterAuthorizationStatus status = [ClusterPrePermissions pushNotificationPermissionAuthorizationStatus];
     if (status == ClusterAuthorizationStatusUnDetermined) {
         self.pushNotificationPermissionCompletionHandler = completionHandler;
+        self.requestedPushNotificationTypes = requestedType;
         self.prePushNotificationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
                                                                                  message:message
                                                                                 delegate:self
@@ -548,23 +561,31 @@ static ClusterPrePermissions *__sharedInstance;
 
 - (void) showActualPushNotificationPermissionAlert
 {
-#ifdef __IPHONE_8_0
-    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert |
-                                            UIUserNotificationTypeBadge |
-                                            UIUserNotificationTypeSound
-                                                                             categories:nil];
-    [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-    [[UIApplication sharedApplication] registerForRemoteNotifications];
-#else
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeAlert |
-     UIRemoteNotificationTypeBadge |
-     UIRemoteNotificationTypeSound];
-#endif
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationDidBecomeActive)
+                                                 name:UIApplicationDidBecomeActiveNotification
+                                               object:nil];
+    
+    if ([[UIApplication sharedApplication] respondsToSelector:@selector(isRegisteredForRemoteNotifications)]) {
+        // iOS8+
+        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationType)self.requestedPushNotificationTypes
+                                                                                 categories:nil];
+        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    } else {
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationType)self.requestedPushNotificationTypes];
+    }
     
     [[NSUserDefaults standardUserDefaults] setBool:YES
                                             forKey:ClusterPrePermissionsDidAskForPushNotifications];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    
+}
+
+- (void)applicationDidBecomeActive
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIApplicationDidBecomeActiveNotification
+                                                  object:nil];
     [self firePushNotificationPermissionCompletionHandler];
 }
 

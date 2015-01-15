@@ -95,7 +95,8 @@
 - (IBAction)onPushNotificationPermissionsButtonTapped:(id)sender
 {
     ClusterPrePermissions *permissions = [ClusterPrePermissions sharedPermissions];
-    [permissions showPushNotificationPermissionsWithTitle:@"Enable push notifications?"
+    [permissions showPushNotificationPermissionsWithType:ClusterPushNotificationTypeAlert | ClusterPushNotificationTypeSound | ClusterPushNotificationTypeBadge
+                                                   title:@"Enable push notifications?"
                                                   message:@"Your message here"
                                           denyButtonTitle:@"Not Now"
                                          grantButtonTitle:@"Enable"
