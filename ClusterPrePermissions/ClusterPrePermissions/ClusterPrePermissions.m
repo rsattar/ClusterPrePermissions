@@ -407,7 +407,6 @@ static ClusterPrePermissions *__sharedInstance;
         self.avPermissionCompletionHandler((status == AVAuthorizationStatusAuthorized),
                                               userDialogResult,
                                               systemDialogResult);
-        self.avPermissionCompletionHandler = nil;
     }
 }
 
