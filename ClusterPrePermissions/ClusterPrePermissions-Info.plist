@@ -28,6 +28,8 @@
 	<string>This app uses your location even in background ...</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app uses your location when in use ...</string>
+	<key>UILaunchStoryboardName</key>
+	<string>PermissionsTestViewController</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
