@@ -649,8 +649,7 @@ static ClusterPrePermissions *__sharedInstance;
 
 - (BOOL)locationAuthorizationStatusPermitsAccess:(CLAuthorizationStatus)authorizationStatus
 {
-    return authorizationStatus == kCLAuthorizationStatusAuthorized ||
-    authorizationStatus == kCLAuthorizationStatusAuthorizedAlways ||
+    return authorizationStatus == kCLAuthorizationStatusAuthorizedAlways ||
     authorizationStatus == kCLAuthorizationStatusAuthorizedWhenInUse;
 }
 
