@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "ClusterPrePermissions"
-  s.version          = "0.5.0"
+  s.version          = "0.6.0"
   s.summary          = "Cluster's pre-permissions utility to ask users using their own dialog for photos or contacts access, before making the system-based request."
   s.description      = <<-DESC
                        Cluster's reusable pre-permissions utility that lets developers ask the 
