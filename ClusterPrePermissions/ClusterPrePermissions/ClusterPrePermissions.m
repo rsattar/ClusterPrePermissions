@@ -215,7 +215,7 @@ static ClusterPrePermissions *__sharedInstance;
     denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
     
-    AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:[self AVEquivalentMediaType:mediaType]];
     if (status == AVAuthorizationStatusNotDetermined) {
         self.avPermissionCompletionHandler = completionHandler;
         self.preAVPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
@@ -241,7 +241,12 @@ static ClusterPrePermissions *__sharedInstance;
                        grantButtonTitle:(NSString *)grantButtonTitle
                       completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
-    [self showAVPermissionsWithType:ClusterAVAuthorizationTypeCamera title:requestTitle message:message denyButtonTitle:denyButtonTitle grantButtonTitle:grantButtonTitle completionHandler:completionHandler];
+    [self showAVPermissionsWithType:ClusterAVAuthorizationTypeCamera
+                              title:requestTitle
+                            message:message
+                    denyButtonTitle:denyButtonTitle
+                   grantButtonTitle:grantButtonTitle
+                  completionHandler:completionHandler];
 }
 
 
@@ -251,7 +256,12 @@ static ClusterPrePermissions *__sharedInstance;
                            grantButtonTitle:(NSString *)grantButtonTitle
                           completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
-    [self showAVPermissionsWithType:ClusterAVAuthorizationTypeMicrophone title:requestTitle message:message denyButtonTitle:denyButtonTitle grantButtonTitle:grantButtonTitle completionHandler:completionHandler];
+    [self showAVPermissionsWithType:ClusterAVAuthorizationTypeMicrophone
+                              title:requestTitle
+                            message:message
+                    denyButtonTitle:denyButtonTitle
+                   grantButtonTitle:grantButtonTitle
+                  completionHandler:completionHandler];
 }
 
 
