@@ -604,16 +604,18 @@ static ClusterPrePermissions *__sharedInstance;
 {
     self.locationManager = [[CLLocationManager alloc] init];
     self.locationManager.delegate = self;
-    
+
     if (self.locationAuthorizationType == ClusterLocationAuthorizationTypeAlways &&
         [self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+
         [self.locationManager requestAlwaysAuthorization];
-    } else
-        if (self.locationAuthorizationType == ClusterLocationAuthorizationTypeWhenInUse &&
-            [self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
-            [self.locationManager requestWhenInUseAuthorization];
-        }
-    
+
+    } else if (self.locationAuthorizationType == ClusterLocationAuthorizationTypeWhenInUse &&
+               [self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+        
+        [self.locationManager requestWhenInUseAuthorization];
+    }
+
     [self.locationManager startUpdatingLocation];
 }
 
