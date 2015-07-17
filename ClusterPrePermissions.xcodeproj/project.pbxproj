@@ -395,6 +395,7 @@
 				GCC_PREFIX_HEADER = "ClusterPrePermissions/ClusterPrePermissions-Prefix.pch";
 				INFOPLIST_FILE = "ClusterPrePermissions/ClusterPrePermissions-Info.plist";
 				PRODUCT_NAME = ClusterPrePermissions;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -408,6 +409,7 @@
 				GCC_PREFIX_HEADER = "ClusterPrePermissions/ClusterPrePermissions-Prefix.pch";
 				INFOPLIST_FILE = "ClusterPrePermissions/ClusterPrePermissions-Info.plist";
 				PRODUCT_NAME = ClusterPrePermissions;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
