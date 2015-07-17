@@ -59,6 +59,7 @@
 		65C599FE18F36ED400AE202C /* PermissionsTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PermissionsTestViewController.xib; sourceTree = "<group>"; };
 		65D1AF1518F4B3BA005ACA29 /* ClusterPrePermissions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClusterPrePermissions.h; path = ClusterPrePermissions/ClusterPrePermissions/ClusterPrePermissions.h; sourceTree = "<group>"; };
 		65D1AF1618F4B3BA005ACA29 /* ClusterPrePermissions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ClusterPrePermissions.m; path = ClusterPrePermissions/ClusterPrePermissions/ClusterPrePermissions.m; sourceTree = "<group>"; };
+		65DEC0DD1B59B58600D27C24 /* ClusterPrePermissions.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ClusterPrePermissions.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +89,7 @@
 		65C599BD18F35A4500AE202C = {
 			isa = PBXGroup;
 			children = (
+				65DEC0DD1B59B58600D27C24 /* ClusterPrePermissions.podspec */,
 				65C599F818F35A5100AE202C /* ClusterPrePermissions */,
 				65C599CF18F35A4500AE202C /* App For Testing Pre-Permissions */,
 				65C599E818F35A4600AE202C /* ClusterPrePermissionsTests */,
