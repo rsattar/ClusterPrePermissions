@@ -2,6 +2,14 @@
 
 Cluster's reusable pre-permissions utility that lets developers ask the users on their own dialog for photos or contacts access, before making the system-based request. This is based on [Cluster's post *The Right Way to Ask Users for iOS Permissions*](https://medium.com/p/96fa4eb54f2c).
 
+#####Supported permissions: 
+- Photo Library
+- Camera
+- Microphone
+- Contacts List
+- Events
+- Location
+
 # Why use Pre-Permissions?
 
 On iOS, when your code tries to access the Camera Roll or the Address Book, the system automatically shows an alert to the user. 
