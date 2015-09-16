@@ -38,6 +38,8 @@ typedef NS_ENUM(NSInteger, ClusterTitleType) {
 #import <CoreLocation/CoreLocation.h>
 #import <AVFoundation/AVFoundation.h>
 
+NSString *const ClusterPrePermissionsDidAskForPushNotifications = @"ClusterPrePermissionsDidAskForPushNotifications";
+
 @interface ClusterPrePermissions () <UIAlertViewDelegate, CLLocationManagerDelegate>
 
 @property (strong, nonatomic) UIAlertView *preAVPermissionAlertView;
@@ -57,6 +59,10 @@ typedef NS_ENUM(NSInteger, ClusterTitleType) {
 @property (strong, nonatomic) CLLocationManager *locationManager;
 
 @property (assign, nonatomic) ClusterLocationAuthorizationType locationAuthorizationType;
+@property (assign, nonatomic) ClusterPushNotificationType requestedPushNotificationTypes;
+@property (strong, nonatomic) UIAlertView *prePushNotificationPermissionAlertView;
+@property (copy, nonatomic) ClusterPrePermissionCompletionHandler pushNotificationPermissionCompletionHandler;
+
 
 + (ClusterAuthorizationStatus) AVPermissionAuthorizationStatusForMediaType:(NSString*)mediaType;
 - (void) showActualAVPermissionAlertWithType:(ClusterAVAuthorizationType)mediaType;
@@ -191,6 +197,118 @@ static ClusterPrePermissions *__sharedInstance;
             return ClusterAuthorizationStatusUnDetermined;
     }
 }
+
++ (ClusterAuthorizationStatus) pushNotificationPermissionAuthorizationStatus
+{
+  BOOL didAskForPermission = [[NSUserDefaults standardUserDefaults] boolForKey:ClusterPrePermissionsDidAskForPushNotifications];
+  
+  if (didAskForPermission) {
+    if ([[UIApplication sharedApplication] respondsToSelector:@selector(isRegisteredForRemoteNotifications)]) {
+      // iOS8+
+      if ([[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
+        return ClusterAuthorizationStatusAuthorized;
+      } else {
+        return ClusterAuthorizationStatusDenied;
+      }
+    } else {
+      if ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] == UIRemoteNotificationTypeNone) {
+        return ClusterAuthorizationStatusDenied;
+      } else {
+        return ClusterAuthorizationStatusAuthorized;
+      }
+    }
+  } else {
+    return ClusterAuthorizationStatusUnDetermined;
+  }
+}
+
+#pragma mark - Push Notification Permissions Help
+
+- (void) showPushNotificationPermissionsWithType:(ClusterPushNotificationType)requestedType
+                                           title:(NSString *)requestTitle
+                                         message:(NSString *)message
+                                 denyButtonTitle:(NSString *)denyButtonTitle
+                                grantButtonTitle:(NSString *)grantButtonTitle
+                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
+  if (requestTitle.length == 0) {
+    requestTitle = @"Enable Push Notifications?";
+  }
+  denyButtonTitle = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
+  grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
+  
+  ClusterAuthorizationStatus status = [ClusterPrePermissions pushNotificationPermissionAuthorizationStatus];
+  if (status == ClusterAuthorizationStatusUnDetermined) {
+    self.pushNotificationPermissionCompletionHandler = completionHandler;
+    self.requestedPushNotificationTypes = requestedType;
+    self.prePushNotificationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                             message:message
+                                                                            delegate:self
+                                                                   cancelButtonTitle:denyButtonTitle
+                                                                   otherButtonTitles:grantButtonTitle, nil];
+    [self.prePushNotificationPermissionAlertView show];
+  } else {
+    if (completionHandler) {
+      completionHandler((status == ClusterAuthorizationStatusUnDetermined),
+                        ClusterDialogResultNoActionTaken,
+                        ClusterDialogResultNoActionTaken);
+    }
+  }
+}
+
+- (void) showActualPushNotificationPermissionAlert
+{
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(applicationDidBecomeActive)
+                                               name:UIApplicationDidBecomeActiveNotification
+                                             object:nil];
+  
+  if ([[UIApplication sharedApplication] respondsToSelector:@selector(isRegisteredForRemoteNotifications)]) {
+    // iOS8+
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationType)self.requestedPushNotificationTypes
+                                                                             categories:nil];
+    [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+    [[UIApplication sharedApplication] registerForRemoteNotifications];
+  } else {
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationType)self.requestedPushNotificationTypes];
+  }
+  [[NSUserDefaults standardUserDefaults] setBool:YES
+                                          forKey:ClusterPrePermissionsDidAskForPushNotifications];
+  [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)applicationDidBecomeActive
+{
+  [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                  name:UIApplicationDidBecomeActiveNotification
+                                                object:nil];
+  [self firePushNotificationPermissionCompletionHandler];
+}
+
+
+- (void) firePushNotificationPermissionCompletionHandler
+{
+  ClusterAuthorizationStatus status = [ClusterPrePermissions pushNotificationPermissionAuthorizationStatus];
+  if (self.pushNotificationPermissionCompletionHandler) {
+    ClusterDialogResult userDialogResult = ClusterDialogResultGranted;
+    ClusterDialogResult systemDialogResult = ClusterDialogResultGranted;
+    if (status == ClusterAuthorizationStatusAuthorized) {
+      userDialogResult = ClusterDialogResultGranted;
+      systemDialogResult = ClusterDialogResultGranted;
+    } else if (status == ClusterAuthorizationStatusDenied) {
+      userDialogResult = ClusterDialogResultGranted;
+      systemDialogResult = ClusterDialogResultDenied;
+    } else if (status == ClusterAuthorizationStatusUnDetermined) {
+      userDialogResult = ClusterDialogResultDenied;
+      systemDialogResult = ClusterDialogResultNoActionTaken;
+    }
+    self.pushNotificationPermissionCompletionHandler((status == ClusterAuthorizationStatusAuthorized),
+                                                     userDialogResult,
+                                                     systemDialogResult);
+    self.pushNotificationPermissionCompletionHandler = nil;
+  }
+}
+
 
 #pragma mark - AV Permissions Help
 
@@ -714,6 +832,14 @@ static ClusterPrePermissions *__sharedInstance;
             // User granted access, now try to trigger the real location access
             [self showActualLocationPermissionAlert];
         }
+    } else if (alertView == self.prePushNotificationPermissionAlertView) {
+      if (buttonIndex == alertView.cancelButtonIndex) {
+        // User said NO, that jerk.
+        [self firePushNotificationPermissionCompletionHandler];
+      } else {
+        // User granted access, now try to trigger the real location access
+        [self showActualPushNotificationPermissionAlert];
+      }
     }
 }
 
