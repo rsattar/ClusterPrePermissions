@@ -175,6 +175,16 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
                                     grantButtonTitle:(NSString *)grantButtonTitle
                                    completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
+/**
+ * @description (Experimental) This checks for your current push notifications 
+ * authorization and attempts to register for push notifications for you. 
+ * See discussion below.
+ * @discussion This is NOT RECOMMENDED for using in your apps, unless
+ * you are a simple app and don't care too much about push notifications. 
+ * In some cases, this will not reliably check for push notifications or request them.
+ * * Uninstalling/reinstalling your app within 24 hours may break this, your callback may
+ * not be fired.
+ */
 - (void) showPushNotificationPermissionsWithType:(ClusterPushNotificationType)requestedType
                                            title:(NSString *)requestTitle
                                          message:(NSString *)message
