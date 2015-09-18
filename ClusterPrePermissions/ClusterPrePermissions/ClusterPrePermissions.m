@@ -98,7 +98,7 @@ static ClusterPrePermissions *__sharedInstance;
 
 + (ClusterAuthorizationStatus) AVPermissionAuthorizationStatusForMediaType:(NSString*)mediaType
 {
-    int status = [AVCaptureDevice authorizationStatusForMediaType:mediaType];
+    AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:mediaType];
     switch (status) {
         case AVAuthorizationStatusAuthorized:
             return ClusterAuthorizationStatusAuthorized;
@@ -126,7 +126,7 @@ static ClusterPrePermissions *__sharedInstance;
 
 + (ClusterAuthorizationStatus) photoPermissionAuthorizationStatus
 {
-    int status = [ALAssetsLibrary authorizationStatus];
+    ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
     switch (status) {
         case ALAuthorizationStatusAuthorized:
             return ClusterAuthorizationStatusAuthorized;
@@ -144,7 +144,7 @@ static ClusterPrePermissions *__sharedInstance;
 
 + (ClusterAuthorizationStatus) contactsPermissionAuthorizationStatus
 {
-    int status = ABAddressBookGetAuthorizationStatus();
+    ABAuthorizationStatus status = ABAddressBookGetAuthorizationStatus();
     switch (status) {
         case kABAuthorizationStatusAuthorized:
             return ClusterAuthorizationStatusAuthorized;
@@ -162,7 +162,7 @@ static ClusterPrePermissions *__sharedInstance;
 
 + (ClusterAuthorizationStatus) eventPermissionAuthorizationStatus:(ClusterEventAuthorizationType)eventType
 {
-    int status = [EKEventStore authorizationStatusForEntityType:
+    EKAuthorizationStatus status = [EKEventStore authorizationStatusForEntityType:
                   [[ClusterPrePermissions sharedPermissions] EKEquivalentEventType:eventType]];
     switch (status) {
         case EKAuthorizationStatusAuthorized:
@@ -181,7 +181,7 @@ static ClusterPrePermissions *__sharedInstance;
 
 + (ClusterAuthorizationStatus) locationPermissionAuthorizationStatus
 {
-    int status = [CLLocationManager authorizationStatus];
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     switch (status) {
         case kCLAuthorizationStatusAuthorizedAlways:
         case kCLAuthorizationStatusAuthorizedWhenInUse:
