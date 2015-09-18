@@ -63,24 +63,6 @@ NSString *const ClusterPrePermissionsDidAskForPushNotifications = @"ClusterPrePe
 @property (strong, nonatomic) UIAlertView *prePushNotificationPermissionAlertView;
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler pushNotificationPermissionCompletionHandler;
 
-
-+ (ClusterAuthorizationStatus) AVPermissionAuthorizationStatusForMediaType:(NSString*)mediaType;
-- (void) showActualAVPermissionAlertWithType:(ClusterAVAuthorizationType)mediaType;
-- (void) showActualPhotoPermissionAlert;
-- (void) showActualContactPermissionAlert;
-- (void) showActualEventPermissionAlert:(ClusterEventAuthorizationType)eventType;
-- (void) showActualLocationPermissionAlert;
-
-- (void) fireAVPermissionCompletionHandlerWithType:(ClusterAVAuthorizationType)mediaType;
-- (NSString*)AVEquivalentMediaType:(ClusterAVAuthorizationType)mediaType;
-- (void) firePhotoPermissionCompletionHandler;
-- (void) fireContactPermissionCompletionHandler;
-- (void) fireEventPermissionCompletionHandler:(ClusterEventAuthorizationType)eventType;
-- (void) fireLocationPermissionCompletionHandler;
-- (NSUInteger)EKEquivalentEventType:(ClusterEventAuthorizationType)eventType;
-- (BOOL)locationAuthorizationStatusPermitsAccess:(CLAuthorizationStatus)authorizationStatus;
-- (NSString *)titleFor:(ClusterTitleType)titleType fromTitle:(NSString *)title;
-
 @end
 
 static ClusterPrePermissions *__sharedInstance;
