@@ -38,6 +38,11 @@ typedef NS_ENUM(NSInteger, ClusterTitleType) {
 #import <CoreLocation/CoreLocation.h>
 #import <AVFoundation/AVFoundation.h>
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_9_0
+//at least iOS 9 code here
+@import Contacts;
+#endif
+
 NSString *const ClusterPrePermissionsDidAskForPushNotifications = @"ClusterPrePermissionsDidAskForPushNotifications";
 
 @interface ClusterPrePermissions () <UIAlertViewDelegate, CLLocationManagerDelegate>
@@ -488,7 +493,22 @@ static ClusterPrePermissions *__sharedInstance;
 
 
 #pragma mark - Contact Permissions Help
-
+/*!
+* @discussion get the authorization status of accessing contacts. It handles both uses of Contacts framework iOS 9+ or AddressBook fremwork < iOS 9
+* @param ClusterContactsAuthorizationType
+*/
+-(ClusterContactsAuthorizationType)getContactsAuthorizationType{
+    
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_9_0
+    //at least iOS 9 code here
+    CNAuthorizationStatus status = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts];
+    return (ClusterContactsAuthorizationType)status;
+#else
+    //lower than iOS 9 code here
+    ABAuthorizationStatus status = ABAddressBookGetAuthorizationStatus();
+    return (ClusterContactsAuthorizationType)status;
+#endif
+}
 
 - (void) showContactsPermissionsWithTitle:(NSString *)requestTitle
                                   message:(NSString *)message
@@ -501,9 +521,11 @@ static ClusterPrePermissions *__sharedInstance;
     }
     denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
-    ABAuthorizationStatus status = ABAddressBookGetAuthorizationStatus();
-    if (status == kABAuthorizationStatusNotDetermined) {
+    
+    ClusterContactsAuthorizationType status = [self getContactsAuthorizationType];
+    
+    
+    if (status == ClusterContactsAuthorizationStatusNotDetermined) {
         self.contactPermissionCompletionHandler = completionHandler;
         self.preContactPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
                                                                         message:message
@@ -513,7 +535,7 @@ static ClusterPrePermissions *__sharedInstance;
         [self.preContactPermissionAlertView show];
     } else {
         if (completionHandler) {
-            completionHandler((status == kABAuthorizationStatusAuthorized),
+            completionHandler(status == ClusterContactsAuthorizationStatusAuthorized,
                               ClusterDialogResultNoActionTaken,
                               ClusterDialogResultNoActionTaken);
         }
@@ -523,6 +545,18 @@ static ClusterPrePermissions *__sharedInstance;
 
 - (void) showActualContactPermissionAlert
 {
+    
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_9_0
+    //at least iOS 9 code here
+    CNContactStore *contactsStore = [[CNContactStore alloc] init];
+    [contactsStore requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self fireContactPermissionCompletionHandler];
+        });
+    }];
+#else
+    //lower than iOS 9 code here
     CFErrorRef error = nil;
     ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(nil, &error);
     ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
@@ -530,34 +564,37 @@ static ClusterPrePermissions *__sharedInstance;
             [self fireContactPermissionCompletionHandler];
         });
     });
+#endif
+    
 }
 
 
 - (void) fireContactPermissionCompletionHandler
 {
-    ABAuthorizationStatus status = ABAddressBookGetAuthorizationStatus();
+    ClusterContactsAuthorizationType status = [self getContactsAuthorizationType];
     if (self.contactPermissionCompletionHandler) {
         ClusterDialogResult userDialogResult = ClusterDialogResultGranted;
         ClusterDialogResult systemDialogResult = ClusterDialogResultGranted;
-        if (status == kABAuthorizationStatusNotDetermined) {
+        if (status == ClusterContactsAuthorizationStatusNotDetermined) {
             userDialogResult = ClusterDialogResultDenied;
             systemDialogResult = ClusterDialogResultNoActionTaken;
-        } else if (status == kABAuthorizationStatusAuthorized) {
+        } else if (status == ClusterContactsAuthorizationStatusAuthorized) {
             userDialogResult = ClusterDialogResultGranted;
             systemDialogResult = ClusterDialogResultGranted;
-        } else if (status == kABAuthorizationStatusDenied) {
+        } else if (status == ClusterContactsAuthorizationStatusDenied) {
             userDialogResult = ClusterDialogResultGranted;
             systemDialogResult = ClusterDialogResultDenied;
-        } else if (status == kABAuthorizationStatusRestricted) {
+        } else if (status == ClusterContactsAuthorizationStatusRestricted) {
             userDialogResult = ClusterDialogResultGranted;
             systemDialogResult = ClusterDialogResultParentallyRestricted;
         }
-        self.contactPermissionCompletionHandler((status == kABAuthorizationStatusAuthorized),
+        self.contactPermissionCompletionHandler((status == ClusterContactsAuthorizationStatusAuthorized),
                                                 userDialogResult,
                                                 systemDialogResult);
         self.contactPermissionCompletionHandler = nil;
     }
 }
+
 
 #pragma mark - Event Permissions Help
 
