@@ -82,6 +82,20 @@ typedef NS_ENUM(NSInteger, ClusterEventAuthorizationType) {
 };
 
 /**
+ * Authorization methods for the usage of Contacts services(Handling existing of AddressBook or Contacts framework).
+ */
+typedef NS_ENUM(NSInteger, ClusterContactsAuthorizationType){
+    ClusterContactsAuthorizationStatusNotDetermined = 0,
+    /*! The application is not authorized to access contact data.
+     *  The user cannot change this application’s status, possibly due to active restrictions such as parental controls being in place. */
+    ClusterContactsAuthorizationStatusRestricted,
+    /*! The user explicitly denied access to contact data for the application. */
+    ClusterContactsAuthorizationStatusDenied,
+    /*! The application is authorized to access contact data. */
+    ClusterContactsAuthorizationStatusAuthorized
+};
+
+/**
  * Authorization methods for the usage of AV services.
  */
 typedef NS_ENUM(NSInteger, ClusterAVAuthorizationType) {
