@@ -198,11 +198,19 @@ static ClusterPrePermissions *__sharedInstance;
                 return ClusterAuthorizationStatusDenied;
             }
         } else {
+
+            // Add compiler check to avoid warnings, if deployment target >= 8.0
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_8_0
+            // iOS 7
             if ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] == UIRemoteNotificationTypeNone) {
                 return ClusterAuthorizationStatusDenied;
             } else {
                 return ClusterAuthorizationStatusAuthorized;
             }
+#else
+            // Impossible state to be in: iOS 8 device, but somehow doesn't respond to isRegisteredForRemoteNotifications?
+            return ClusterAuthorizationStatusDenied;
+#endif
         }
     } else {
         return ClusterAuthorizationStatusUnDetermined;
@@ -257,7 +265,10 @@ static ClusterPrePermissions *__sharedInstance;
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
         [[UIApplication sharedApplication] registerForRemoteNotifications];
     } else {
+        // Add compiler check to avoid warnings, if deployment target >= 8.0
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_8_0
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationType)self.requestedPushNotificationTypes];
+#endif
     }
     [[NSUserDefaults standardUserDefaults] setBool:YES
                                             forKey:ClusterPrePermissionsDidAskForPushNotifications];
