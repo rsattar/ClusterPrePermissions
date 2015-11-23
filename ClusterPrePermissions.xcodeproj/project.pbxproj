@@ -401,7 +401,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ClusterPrePermissions/ClusterPrePermissions-Prefix.pch";
 				INFOPLIST_FILE = "ClusterPrePermissions/ClusterPrePermissions-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.getcluster.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = ClusterPrePermissions;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -417,7 +417,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ClusterPrePermissions/ClusterPrePermissions-Prefix.pch";
 				INFOPLIST_FILE = "ClusterPrePermissions/ClusterPrePermissions-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.getcluster.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = ClusterPrePermissions;
 				TARGETED_DEVICE_FAMILY = "1,2";

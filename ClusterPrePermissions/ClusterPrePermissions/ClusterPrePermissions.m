@@ -43,29 +43,25 @@ typedef NS_ENUM(NSInteger, ClusterTitleType) {
 @import Contacts;
 #endif
 
+#import "ClusterAlertView.h"
+
 NSString *const ClusterPrePermissionsDidAskForPushNotifications = @"ClusterPrePermissionsDidAskForPushNotifications";
 
 @interface ClusterPrePermissions () <UIAlertViewDelegate, CLLocationManagerDelegate>
 
-@property (strong, nonatomic) UIAlertView *preAVPermissionAlertView;
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler avPermissionCompletionHandler;
 
-@property (strong, nonatomic) UIAlertView *prePhotoPermissionAlertView;
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler photoPermissionCompletionHandler;
 
-@property (strong, nonatomic) UIAlertView *preContactPermissionAlertView;
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler contactPermissionCompletionHandler;
 
-@property (strong, nonatomic) UIAlertView *preEventPermissionAlertView;
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler eventPermissionCompletionHandler;
 
-@property (strong, nonatomic) UIAlertView *preLocationPermissionAlertView;
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler locationPermissionCompletionHandler;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 
 @property (assign, nonatomic) ClusterLocationAuthorizationType locationAuthorizationType;
 @property (assign, nonatomic) ClusterPushNotificationType requestedPushNotificationTypes;
-@property (strong, nonatomic) UIAlertView *prePushNotificationPermissionAlertView;
 @property (copy, nonatomic) ClusterPrePermissionCompletionHandler pushNotificationPermissionCompletionHandler;
 
 @end
@@ -122,24 +118,6 @@ static ClusterPrePermissions *__sharedInstance;
             return ClusterAuthorizationStatusDenied;
 
         case ALAuthorizationStatusRestricted:
-            return ClusterAuthorizationStatusRestricted;
-
-        default:
-            return ClusterAuthorizationStatusUnDetermined;
-    }
-}
-
-+ (ClusterAuthorizationStatus) contactsPermissionAuthorizationStatus
-{
-    ABAuthorizationStatus status = ABAddressBookGetAuthorizationStatus();
-    switch (status) {
-        case kABAuthorizationStatusAuthorized:
-            return ClusterAuthorizationStatusAuthorized;
-
-        case kABAuthorizationStatusDenied:
-            return ClusterAuthorizationStatusDenied;
-
-        case kABAuthorizationStatusRestricted:
             return ClusterAuthorizationStatusRestricted;
 
         default:
@@ -236,12 +214,18 @@ static ClusterPrePermissions *__sharedInstance;
     if (status == ClusterAuthorizationStatusUnDetermined) {
         self.pushNotificationPermissionCompletionHandler = completionHandler;
         self.requestedPushNotificationTypes = requestedType;
-        self.prePushNotificationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                                 message:message
-                                                                                delegate:self
-                                                                       cancelButtonTitle:denyButtonTitle
-                                                                       otherButtonTitles:grantButtonTitle, nil];
-        [self.prePushNotificationPermissionAlertView show];
+        
+        [ClusterAlertView showAlertWithTitle:requestTitle message:message cancelButtonTitle:denyButtonTitle otherButtonTitles:@[grantButtonTitle] completion:^(NSInteger selectedButtonIndex) {
+            
+            if (selectedButtonIndex == 0) {
+                // User said NO, that jerk.
+                [self firePushNotificationPermissionCompletionHandler];
+            } else {
+                // User granted access, now try to trigger the real location access
+                [self showActualPushNotificationPermissionAlert];
+            }
+        }];
+        
     } else {
         if (completionHandler) {
             completionHandler((status == ClusterAuthorizationStatusUnDetermined),
@@ -334,13 +318,17 @@ static ClusterPrePermissions *__sharedInstance;
     AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:[self AVEquivalentMediaType:mediaType]];
     if (status == AVAuthorizationStatusNotDetermined) {
         self.avPermissionCompletionHandler = completionHandler;
-        self.preAVPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                   message:message
-                                                                  delegate:self
-                                                         cancelButtonTitle:denyButtonTitle
-                                                         otherButtonTitles:grantButtonTitle, nil];
-        self.preAVPermissionAlertView.tag = mediaType;
-        [self.preAVPermissionAlertView show];
+        [ClusterAlertView showAlertWithTitle:requestTitle message:message cancelButtonTitle:denyButtonTitle otherButtonTitles:@[grantButtonTitle] completion:^(NSInteger selectedButtonIndex) {
+            
+            if (selectedButtonIndex == 0) {
+                // User said NO, jerk.
+                [self fireAVPermissionCompletionHandlerWithType:mediaType];
+            } else {
+                // User granted access, now show the REAL permissions dialog
+                [self showActualAVPermissionAlertWithType:mediaType];
+            }
+            
+        }];
     } else {
         if (completionHandler) {
             completionHandler((status == AVAuthorizationStatusAuthorized),
@@ -446,12 +434,18 @@ static ClusterPrePermissions *__sharedInstance;
     ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
     if (status == ALAuthorizationStatusNotDetermined) {
         self.photoPermissionCompletionHandler = completionHandler;
-        self.prePhotoPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                      message:message
-                                                                     delegate:self
-                                                            cancelButtonTitle:denyButtonTitle
-                                                            otherButtonTitles:grantButtonTitle, nil];
-        [self.prePhotoPermissionAlertView show];
+        
+        [ClusterAlertView showAlertWithTitle:requestTitle message:message cancelButtonTitle:denyButtonTitle otherButtonTitles:@[grantButtonTitle] completion:^(NSInteger selectedButtonIndex) {
+            
+            if (selectedButtonIndex == 0) {
+                // User said NO, jerk.
+                [self firePhotoPermissionCompletionHandler];
+            } else {
+                // User granted access, now show the REAL permissions dialog
+                [self showActualPhotoPermissionAlert];
+            }
+        }];
+
     } else {
         if (completionHandler) {
             completionHandler((status == ALAuthorizationStatusAuthorized),
@@ -538,12 +532,18 @@ static ClusterPrePermissions *__sharedInstance;
     
     if (status == ClusterContactsAuthorizationStatusNotDetermined) {
         self.contactPermissionCompletionHandler = completionHandler;
-        self.preContactPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                        message:message
-                                                                       delegate:self
-                                                              cancelButtonTitle:denyButtonTitle
-                                                              otherButtonTitles:grantButtonTitle, nil];
-        [self.preContactPermissionAlertView show];
+        [ClusterAlertView showAlertWithTitle:requestTitle message:message cancelButtonTitle:denyButtonTitle otherButtonTitles:@[grantButtonTitle] completion:^(NSInteger selectedButtonIndex) {
+
+            if (selectedButtonIndex == 0) {
+                // User said NO, that jerk.
+                [self fireContactPermissionCompletionHandler];
+            } else {
+                // User granted access, now try to trigger the real contacts access
+                [self showActualContactPermissionAlert];
+            }
+            
+        }];
+        
     } else {
         if (completionHandler) {
             completionHandler(status == ClusterContactsAuthorizationStatusAuthorized,
@@ -634,13 +634,17 @@ static ClusterPrePermissions *__sharedInstance;
     EKAuthorizationStatus status = [EKEventStore authorizationStatusForEntityType:[self EKEquivalentEventType:eventType]];
     if (status == EKAuthorizationStatusNotDetermined) {
         self.eventPermissionCompletionHandler = completionHandler;
-        self.preEventPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                      message:message
-                                                                     delegate:self
-                                                            cancelButtonTitle:denyButtonTitle
-                                                            otherButtonTitles:grantButtonTitle, nil];
-        self.preEventPermissionAlertView.tag = eventType;
-        [self.preEventPermissionAlertView show];
+        [ClusterAlertView showAlertWithTitle:requestTitle message:message cancelButtonTitle:denyButtonTitle otherButtonTitles:@[grantButtonTitle] completion:^(NSInteger selectedButtonIndex) {
+            
+            if (selectedButtonIndex == 0) {
+                // User said NO, that jerk.
+                [self fireEventPermissionCompletionHandler:eventType];
+            } else {
+                // User granted access, now try to trigger the real contacts access
+                [self showActualEventPermissionAlert:eventType];
+            }
+            
+        }];
     } else {
         if (completionHandler) {
             completionHandler((status == EKAuthorizationStatusAuthorized),
@@ -732,12 +736,16 @@ static ClusterPrePermissions *__sharedInstance;
     if (status == kCLAuthorizationStatusNotDetermined) {
         self.locationPermissionCompletionHandler = completionHandler;
         self.locationAuthorizationType = authorizationType;
-        self.preLocationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                         message:message
-                                                                        delegate:self
-                                                               cancelButtonTitle:denyButtonTitle
-                                                               otherButtonTitles:grantButtonTitle, nil];
-        [self.preLocationPermissionAlertView show];
+        [ClusterAlertView showAlertWithTitle:requestTitle message:message cancelButtonTitle:denyButtonTitle otherButtonTitles:@[grantButtonTitle] completion:^(NSInteger selectedButtonIndex) {
+            
+            if (selectedButtonIndex == 0) {
+                // User said NO, that jerk.
+                [self fireLocationPermissionCompletionHandler];
+            } else {
+                // User granted access, now try to trigger the real location access
+                [self showActualLocationPermissionAlert];
+            }
+        }];
     } else {
         if (completionHandler) {
             completionHandler(([self locationAuthorizationStatusPermitsAccess:status]),
@@ -809,67 +817,6 @@ static ClusterPrePermissions *__sharedInstance;
 {
     if (status != kCLAuthorizationStatusNotDetermined) {
         [self fireLocationPermissionCompletionHandler];
-    }
-}
-
-
-#pragma mark - UIAlertViewDelegate
-
-
-- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if (alertView == self.preAVPermissionAlertView) {
-        if (buttonIndex == alertView.cancelButtonIndex) {
-            // User said NO, jerk.
-            [self fireAVPermissionCompletionHandlerWithType:alertView.tag];
-        } else {
-            // User granted access, now show the REAL permissions dialog
-            [self showActualAVPermissionAlertWithType:alertView.tag];
-        }
-
-        self.preAVPermissionAlertView = nil;
-    } else if (alertView == self.prePhotoPermissionAlertView) {
-        if (buttonIndex == alertView.cancelButtonIndex) {
-            // User said NO, jerk.
-            [self firePhotoPermissionCompletionHandler];
-        } else {
-            // User granted access, now show the REAL permissions dialog
-            [self showActualPhotoPermissionAlert];
-        }
-
-        self.prePhotoPermissionAlertView = nil;
-    } else if (alertView == self.preContactPermissionAlertView) {
-        if (buttonIndex == alertView.cancelButtonIndex) {
-            // User said NO, that jerk.
-            [self fireContactPermissionCompletionHandler];
-        } else {
-            // User granted access, now try to trigger the real contacts access
-            [self showActualContactPermissionAlert];
-        }
-    } else if (alertView == self.preEventPermissionAlertView) {
-        if (buttonIndex == alertView.cancelButtonIndex) {
-            // User said NO, that jerk.
-            [self fireEventPermissionCompletionHandler:alertView.tag];
-        } else {
-            // User granted access, now try to trigger the real contacts access
-            [self showActualEventPermissionAlert:alertView.tag];
-        }
-    } else if (alertView == self.preLocationPermissionAlertView) {
-        if (buttonIndex == alertView.cancelButtonIndex) {
-            // User said NO, that jerk.
-            [self fireLocationPermissionCompletionHandler];
-        } else {
-            // User granted access, now try to trigger the real location access
-            [self showActualLocationPermissionAlert];
-        }
-    } else if (alertView == self.prePushNotificationPermissionAlertView) {
-        if (buttonIndex == alertView.cancelButtonIndex) {
-            // User said NO, that jerk.
-            [self firePushNotificationPermissionCompletionHandler];
-        } else {
-            // User granted access, now try to trigger the real location access
-            [self showActualPushNotificationPermissionAlert];
-        }
     }
 }
 

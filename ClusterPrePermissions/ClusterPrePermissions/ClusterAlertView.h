@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-typedef void(^ClusterAlertViewCompletion)(NSInteger selectedOtherButtonIndex);
+typedef void(^ClusterAlertViewCompletion)(NSInteger selectedButtonIndex);
 
 @interface ClusterAlertView : NSObject
 
