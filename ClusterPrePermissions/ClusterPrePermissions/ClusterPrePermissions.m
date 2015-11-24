@@ -129,23 +129,34 @@ static ClusterPrePermissions *__sharedInstance;
     }
 }
 
+
 + (ClusterAuthorizationStatus) contactsPermissionAuthorizationStatus
 {
+    ClusterContactsAuthorizationType authType;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_9_0
+    //at least iOS 9 code here
+    CNAuthorizationStatus status = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts];
+    authType = (ClusterContactsAuthorizationType)status;
+#else
+    //lower than iOS 9 code here
     ABAuthorizationStatus status = ABAddressBookGetAuthorizationStatus();
-    switch (status) {
-        case kABAuthorizationStatusAuthorized:
+    authType = (ClusterContactsAuthorizationType)status;
+#endif
+    switch (authType) {
+        case ClusterContactsAuthorizationStatusAuthorized:
             return ClusterAuthorizationStatusAuthorized;
-
-        case kABAuthorizationStatusDenied:
+            
+        case ClusterContactsAuthorizationStatusDenied:
             return ClusterAuthorizationStatusDenied;
-
-        case kABAuthorizationStatusRestricted:
+            
+        case ClusterContactsAuthorizationStatusRestricted:
             return ClusterAuthorizationStatusRestricted;
-
+            
         default:
             return ClusterAuthorizationStatusUnDetermined;
     }
 }
+
 
 + (ClusterAuthorizationStatus) eventPermissionAuthorizationStatus:(ClusterEventAuthorizationType)eventType
 {
