@@ -61,7 +61,8 @@
 - (IBAction)onContactsButtonPermissionTapped:(id)sender
 {
     ClusterPrePermissions *permissions = [ClusterPrePermissions sharedPermissions];
-    [permissions showContactsPermissionsWithTitle:@"Access your contacts?"
+    [permissions showContactsPermissionsInViewController:self
+                                               withTitle:@"Access your contacts?"
                                           message:@"Your message here"
                                   denyButtonTitle:@"Not Now"
                                  grantButtonTitle:@"Give Access"
@@ -78,7 +79,8 @@
 - (IBAction)onLocationButtonPermissionTapped:(id)sender
 {
     ClusterPrePermissions *permissions = [ClusterPrePermissions sharedPermissions];
-    [permissions showLocationPermissionsWithTitle:@"Access your location?"
+    [permissions showLocationPermissionsInViewController:self
+                                               withTitle:@"Access your location?"
                                           message:@"Your message here"
                                   denyButtonTitle:@"Not Now"
                                  grantButtonTitle:@"Give Access"
