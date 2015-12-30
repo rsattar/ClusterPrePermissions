@@ -663,6 +663,21 @@ static ClusterPrePermissions *__sharedInstance;
                          grantButtonTitle:(NSString *)grantButtonTitle
                         completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
+    [self showContactsPermissionsInViewController:nil
+                                        withTitle:requestTitle
+                                          message:message
+                                  denyButtonTitle:denyButtonTitle
+                                 grantButtonTitle:grantButtonTitle
+                                completionHandler:completionHandler];
+}
+
+- (void) showContactsPermissionsInViewController:(UIViewController *)viewController
+                                       withTitle:(NSString *)requestTitle
+                                         message:(NSString *)message
+                                 denyButtonTitle:(NSString *)denyButtonTitle
+                                grantButtonTitle:(NSString *)grantButtonTitle
+                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
     if (requestTitle.length == 0) {
         requestTitle = @"Access Contacts?";
     }
@@ -673,13 +688,44 @@ static ClusterPrePermissions *__sharedInstance;
     
     
     if (status == ClusterContactsAuthorizationStatusNotDetermined) {
-        self.contactPermissionCompletionHandler = completionHandler;
-        self.preContactPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                        message:message
-                                                                       delegate:self
-                                                              cancelButtonTitle:denyButtonTitle
-                                                              otherButtonTitles:grantButtonTitle, nil];
-        [self.preContactPermissionAlertView show];
+        
+        if ([UIAlertController class]
+            && [viewController isKindOfClass:[UIViewController class]]) {
+            
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:requestTitle
+                                                                                     message:message
+                                                                              preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction *denyAlertAction = [UIAlertAction actionWithTitle:denyButtonTitle
+                                                                      style:UIAlertActionStyleCancel
+                                                                    handler:^(UIAlertAction * _Nonnull action) {
+                                                                        [self fireContactPermissionCompletionHandler];
+                                                                        
+                                                                    }];
+            
+            [alertController addAction:denyAlertAction];
+            
+            UIAlertAction *grantAlertAction = [UIAlertAction actionWithTitle:grantButtonTitle
+                                                                       style:UIAlertActionStyleDefault
+                                                                     handler:^(UIAlertAction * _Nonnull action) {
+                                                                         [self showActualContactPermissionAlert];
+                                                                     }];
+            
+            [alertController addAction:grantAlertAction];
+            
+            [viewController presentViewController:alertController
+                                         animated:YES
+                                       completion:nil];
+            
+        } else {
+            self.contactPermissionCompletionHandler = completionHandler;
+            self.preContactPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                            message:message
+                                                                           delegate:self
+                                                                  cancelButtonTitle:denyButtonTitle
+                                                                  otherButtonTitles:grantButtonTitle, nil];
+            [self.preContactPermissionAlertView show];
+        }
     } else {
         if (completionHandler) {
             completionHandler(status == ClusterContactsAuthorizationStatusAuthorized,
