@@ -237,22 +237,69 @@ static ClusterPrePermissions *__sharedInstance;
                                 grantButtonTitle:(NSString *)grantButtonTitle
                                completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
+    [self showPushNotificationInViewController:nil
+                           permissionsWithType:requestedType
+                                         title:requestTitle
+                                       message:message
+                               denyButtonTitle:denyButtonTitle
+                              grantButtonTitle:grantButtonTitle
+                             completionHandler:completionHandler];
+}
+
+- (void) showPushNotificationInViewController:(UIViewController *)viewController
+                          permissionsWithType:(ClusterPushNotificationType)requestedType
+                                        title:(NSString *)requestTitle
+                                      message:(NSString *)message
+                              denyButtonTitle:(NSString *)denyButtonTitle
+                             grantButtonTitle:(NSString *)grantButtonTitle
+                            completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
     if (requestTitle.length == 0) {
         requestTitle = @"Enable Push Notifications?";
     }
     denyButtonTitle = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
+    
     ClusterAuthorizationStatus status = [ClusterPrePermissions pushNotificationPermissionAuthorizationStatus];
     if (status == ClusterAuthorizationStatusUnDetermined) {
-        self.pushNotificationPermissionCompletionHandler = completionHandler;
-        self.requestedPushNotificationTypes = requestedType;
-        self.prePushNotificationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                                 message:message
-                                                                                delegate:self
-                                                                       cancelButtonTitle:denyButtonTitle
-                                                                       otherButtonTitles:grantButtonTitle, nil];
-        [self.prePushNotificationPermissionAlertView show];
+        
+        if ([UIAlertController class]
+            && [viewController isKindOfClass:[UIViewController class]]) {
+            
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:requestTitle
+                                                                                     message:message
+                                                                              preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction *denyAlertAction = [UIAlertAction actionWithTitle:denyButtonTitle
+                                                                      style:UIAlertActionStyleCancel
+                                                                    handler:^(UIAlertAction * _Nonnull action) {
+                                                                        [self firePushNotificationPermissionCompletionHandler];
+                                                                    }];
+            
+            [alertController addAction:denyAlertAction];
+            
+            UIAlertAction *grantAlertAction = [UIAlertAction actionWithTitle:grantButtonTitle
+                                                                       style:UIAlertActionStyleDefault
+                                                                     handler:^(UIAlertAction * _Nonnull action) {
+                                                                         [self showActualPushNotificationPermissionAlert];
+                                                                     }];
+            
+            [alertController addAction:grantAlertAction];
+            
+            [viewController presentViewController:alertController
+                                         animated:YES
+                                       completion:nil];
+            
+        } else {
+            self.pushNotificationPermissionCompletionHandler = completionHandler;
+            self.requestedPushNotificationTypes = requestedType;
+            self.prePushNotificationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                                     message:message
+                                                                                    delegate:self
+                                                                           cancelButtonTitle:denyButtonTitle
+                                                                           otherButtonTitles:grantButtonTitle, nil];
+            [self.prePushNotificationPermissionAlertView show];
+        }
     } else {
         if (completionHandler) {
             completionHandler((status == ClusterAuthorizationStatusUnDetermined),

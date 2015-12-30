@@ -264,6 +264,14 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
                                          message:(NSString *)message
                                  denyButtonTitle:(NSString *)denyButtonTitle
                                 grantButtonTitle:(NSString *)grantButtonTitle
-                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler __attribute__((deprecated("Replaced by -showPushNotificationInViewController:permissionsWithType:title:message:denyButtonTitle:grantButtonTitle:completionHandler:")));
+
+- (void) showPushNotificationInViewController:(UIViewController *)viewController
+                          permissionsWithType:(ClusterPushNotificationType)requestedType
+                                        title:(NSString *)requestTitle
+                                      message:(NSString *)message
+                              denyButtonTitle:(NSString *)denyButtonTitle
+                             grantButtonTitle:(NSString *)grantButtonTitle
+                            completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 @end
