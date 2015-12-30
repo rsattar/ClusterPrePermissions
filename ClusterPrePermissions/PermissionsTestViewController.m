@@ -43,7 +43,8 @@
 - (IBAction)onPhotoPermissionsButtonTapped:(id)sender
 {
     ClusterPrePermissions *permissions = [ClusterPrePermissions sharedPermissions];
-    [permissions showPhotoPermissionsWithTitle:@"Access your photos?"
+    [permissions showPhotoPermissionsInViewController:self
+                                            withTitle:@"Access your photos?"
                                        message:@"Your message here"
                                denyButtonTitle:@"Not Now"
                               grantButtonTitle:@"Give Access"

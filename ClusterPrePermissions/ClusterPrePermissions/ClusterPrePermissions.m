@@ -448,6 +448,22 @@ static ClusterPrePermissions *__sharedInstance;
                       grantButtonTitle:(NSString *)grantButtonTitle
                      completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
+    [self showPhotoPermissionsInViewController:nil
+                                     withTitle:requestTitle
+                                       message:message
+                               denyButtonTitle:denyButtonTitle
+                              grantButtonTitle:grantButtonTitle
+                             completionHandler:completionHandler];
+}
+
+- (void) showPhotoPermissionsInViewController:(UIViewController *)viewController
+                                    withTitle:(NSString *)requestTitle
+                                      message:(NSString *)message
+                              denyButtonTitle:(NSString *)denyButtonTitle
+                             grantButtonTitle:(NSString *)grantButtonTitle
+                            completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+
+{
     if (requestTitle.length == 0) {
         requestTitle = @"Access Photos?";
     }
@@ -456,13 +472,45 @@ static ClusterPrePermissions *__sharedInstance;
 
     ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
     if (status == ALAuthorizationStatusNotDetermined) {
-        self.photoPermissionCompletionHandler = completionHandler;
-        self.prePhotoPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                      message:message
-                                                                     delegate:self
-                                                            cancelButtonTitle:denyButtonTitle
-                                                            otherButtonTitles:grantButtonTitle, nil];
-        [self.prePhotoPermissionAlertView show];
+        
+        if ([UIAlertController class]
+            && [viewController isKindOfClass:[UIViewController class]]) {
+            
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:requestTitle
+                                                                                     message:message
+                                                                              preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction *denyAlertAction = [UIAlertAction actionWithTitle:denyButtonTitle
+                                                                      style:UIAlertActionStyleCancel
+                                                                    handler:^(UIAlertAction * _Nonnull action) {
+                                                                    [self firePhotoPermissionCompletionHandler];
+                
+            }];
+            
+            [alertController addAction:denyAlertAction];
+
+            UIAlertAction *grantAlertAction = [UIAlertAction actionWithTitle:grantButtonTitle
+                                                                       style:UIAlertActionStyleDefault
+                                                                     handler:^(UIAlertAction * _Nonnull action) {
+                                                                     [self showActualPhotoPermissionAlert];
+                                                                 }];
+
+            [alertController addAction:grantAlertAction];
+            
+            [viewController presentViewController:alertController
+                                         animated:YES
+                                       completion:nil];
+            
+        } else {
+            self.photoPermissionCompletionHandler = completionHandler;
+            self.prePhotoPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                          message:message
+                                                                         delegate:self
+                                                                cancelButtonTitle:denyButtonTitle
+                                                                otherButtonTitles:grantButtonTitle, nil];
+            [self.prePhotoPermissionAlertView show];
+        }
+        
     } else {
         if (completionHandler) {
             completionHandler((status == ALAuthorizationStatusAuthorized),

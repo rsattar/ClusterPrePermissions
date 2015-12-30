@@ -161,7 +161,15 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
                                message:(NSString *)message
                        denyButtonTitle:(NSString *)denyButtonTitle
                       grantButtonTitle:(NSString *)grantButtonTitle
+                     completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler __attribute__((deprecated("Replaced by -showPhotoPermissionsInViewController:withTitle:message:denyButtonTitle:grantButtonTitle:completionHandler:")));
+
+- (void) showPhotoPermissionsInViewController:(UIViewController *)viewController
+                                    withTitle:(NSString *)requestTitle
+                                      message:(NSString *)message
+                              denyButtonTitle:(NSString *)denyButtonTitle
+                             grantButtonTitle:(NSString *)grantButtonTitle
                      completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+
 
 - (void) showContactsPermissionsWithTitle:(NSString *)requestTitle
                                   message:(NSString *)message
