@@ -211,7 +211,15 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
                                   message:(NSString *)message
                           denyButtonTitle:(NSString *)denyButtonTitle
                          grantButtonTitle:(NSString *)grantButtonTitle
-                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler __attribute__((deprecated("Replaced by -showEventPermissionsInViewController:withType:title:message:denyButtonTitle:grantButtonTitle:completionHandler:")));
+
+- (void) showEventPermissionsInViewController:(UIViewController *)viewController
+                                     withType:(ClusterEventAuthorizationType)eventType
+                                        title:(NSString *)requestTitle
+                                      message:(NSString *)message
+                              denyButtonTitle:(NSString *)denyButtonTitle
+                             grantButtonTitle:(NSString *)grantButtonTitle
+                            completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 - (void) showLocationPermissionsWithTitle:(NSString *)requestTitle
                                   message:(NSString *)message

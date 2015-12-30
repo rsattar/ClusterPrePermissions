@@ -799,12 +799,29 @@ static ClusterPrePermissions *__sharedInstance;
                      grantButtonTitle:(NSString *)grantButtonTitle
                     completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
+    [self showEventPermissionsInViewController:nil
+                                      withType:eventType
+                                         title:requestTitle
+                                       message:message
+                               denyButtonTitle:denyButtonTitle
+                              grantButtonTitle:grantButtonTitle
+                             completionHandler:completionHandler];
+}
+
+- (void) showEventPermissionsInViewController:(UIViewController *)viewController
+                                     withType:(ClusterEventAuthorizationType)eventType
+                                        title:(NSString *)requestTitle
+                                      message:(NSString *)message
+                              denyButtonTitle:(NSString *)denyButtonTitle
+                             grantButtonTitle:(NSString *)grantButtonTitle
+                            completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
     if (requestTitle.length == 0) {
         switch (eventType) {
             case ClusterEventAuthorizationTypeEvent:
                 requestTitle = @"Access Calendar?";
                 break;
-
+                
             default:
                 requestTitle = @"Access Reminders?";
                 break;
@@ -812,17 +829,48 @@ static ClusterPrePermissions *__sharedInstance;
     }
     denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
+    
     EKAuthorizationStatus status = [EKEventStore authorizationStatusForEntityType:[self EKEquivalentEventType:eventType]];
     if (status == EKAuthorizationStatusNotDetermined) {
-        self.eventPermissionCompletionHandler = completionHandler;
-        self.preEventPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                      message:message
-                                                                     delegate:self
-                                                            cancelButtonTitle:denyButtonTitle
-                                                            otherButtonTitles:grantButtonTitle, nil];
-        self.preEventPermissionAlertView.tag = eventType;
-        [self.preEventPermissionAlertView show];
+        
+        if ([UIAlertController class]
+            && [viewController isKindOfClass:[UIViewController class]]) {
+            
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:requestTitle
+                                                                                     message:message
+                                                                              preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction *denyAlertAction = [UIAlertAction actionWithTitle:denyButtonTitle
+                                                                      style:UIAlertActionStyleCancel
+                                                                    handler:^(UIAlertAction * _Nonnull action) {
+                                                                        [self fireEventPermissionCompletionHandler:eventType];
+                                                                        
+                                                                    }];
+            
+            [alertController addAction:denyAlertAction];
+            
+            UIAlertAction *grantAlertAction = [UIAlertAction actionWithTitle:grantButtonTitle
+                                                                       style:UIAlertActionStyleDefault
+                                                                     handler:^(UIAlertAction * _Nonnull action) {
+                                                                         [self showActualEventPermissionAlert:eventType];
+                                                                     }];
+            
+            [alertController addAction:grantAlertAction];
+            
+            [viewController presentViewController:alertController
+                                         animated:YES
+                                       completion:nil];
+            
+        } else {
+            self.eventPermissionCompletionHandler = completionHandler;
+            self.preEventPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                          message:message
+                                                                         delegate:self
+                                                                cancelButtonTitle:denyButtonTitle
+                                                                otherButtonTitles:grantButtonTitle, nil];
+            self.preEventPermissionAlertView.tag = eventType;
+            [self.preEventPermissionAlertView show];
+        }
     } else {
         if (completionHandler) {
             completionHandler((status == EKAuthorizationStatusAuthorized),
@@ -831,7 +879,6 @@ static ClusterPrePermissions *__sharedInstance;
         }
     }
 }
-
 
 - (void) showActualEventPermissionAlert:(ClusterEventAuthorizationType)eventType
 {
