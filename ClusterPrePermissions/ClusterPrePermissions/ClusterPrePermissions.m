@@ -328,12 +328,29 @@ static ClusterPrePermissions *__sharedInstance;
                   grantButtonTitle:(NSString *)grantButtonTitle
                  completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
+    [self showAVPermissionsInViewController:nil
+                                   withType:mediaType
+                                      title:requestTitle
+                                    message:message
+                            denyButtonTitle:denyButtonTitle
+                           grantButtonTitle:grantButtonTitle
+                          completionHandler:completionHandler];
+}
+
+- (void) showAVPermissionsInViewController:(UIViewController *)viewController
+                                  withType:(ClusterAVAuthorizationType)mediaType
+                                     title:(NSString *)requestTitle
+                                   message:(NSString *)message
+                           denyButtonTitle:(NSString *)denyButtonTitle
+                          grantButtonTitle:(NSString *)grantButtonTitle
+                         completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
     if (requestTitle.length == 0) {
         switch (mediaType) {
             case ClusterAVAuthorizationTypeCamera:
                 requestTitle = @"Access Camera?";
                 break;
-
+                
             default:
                 requestTitle = @"Access Microphone?";
                 break;
@@ -341,17 +358,46 @@ static ClusterPrePermissions *__sharedInstance;
     }
     denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
+    
     AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:[self AVEquivalentMediaType:mediaType]];
     if (status == AVAuthorizationStatusNotDetermined) {
-        self.avPermissionCompletionHandler = completionHandler;
-        self.preAVPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                   message:message
-                                                                  delegate:self
-                                                         cancelButtonTitle:denyButtonTitle
-                                                         otherButtonTitles:grantButtonTitle, nil];
-        self.preAVPermissionAlertView.tag = mediaType;
-        [self.preAVPermissionAlertView show];
+        
+        if ([UIAlertController class]
+            && [viewController isKindOfClass:[UIViewController class]]) {
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:requestTitle
+                                                                                     message:message
+                                                                              preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction *denyAlertAction = [UIAlertAction actionWithTitle:denyButtonTitle
+                                                                      style:UIAlertActionStyleCancel
+                                                                    handler:^(UIAlertAction * _Nonnull action) {
+                                                                        [self fireAVPermissionCompletionHandlerWithType:mediaType];
+                                                                    }];
+            
+            [alertController addAction:denyAlertAction];
+            
+            UIAlertAction *grantAlertAction = [UIAlertAction actionWithTitle:grantButtonTitle
+                                                                       style:UIAlertActionStyleDefault
+                                                                     handler:^(UIAlertAction * _Nonnull action) {
+                                                                         [self showActualAVPermissionAlertWithType:mediaType];
+                                                                     }];
+
+            
+            [alertController addAction:grantAlertAction];
+            
+            [viewController presentViewController:alertController
+                                         animated:YES
+                                       completion:nil];
+        } else {
+            self.avPermissionCompletionHandler = completionHandler;
+            self.preAVPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                       message:message
+                                                                      delegate:self
+                                                             cancelButtonTitle:denyButtonTitle
+                                                             otherButtonTitles:grantButtonTitle, nil];
+            self.preAVPermissionAlertView.tag = mediaType;
+            [self.preAVPermissionAlertView show];
+        }
     } else {
         if (completionHandler) {
             completionHandler((status == AVAuthorizationStatusAuthorized),
@@ -368,12 +414,28 @@ static ClusterPrePermissions *__sharedInstance;
                        grantButtonTitle:(NSString *)grantButtonTitle
                       completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
-    [self showAVPermissionsWithType:ClusterAVAuthorizationTypeCamera
-                              title:requestTitle
-                            message:message
-                    denyButtonTitle:denyButtonTitle
-                   grantButtonTitle:grantButtonTitle
-                  completionHandler:completionHandler];
+    [self showCameraPermissionsInViewController:nil
+                                      withTitle:requestTitle
+                                        message:message
+                                denyButtonTitle:denyButtonTitle
+                               grantButtonTitle:grantButtonTitle
+                              completionHandler:completionHandler];
+}
+
+- (void) showCameraPermissionsInViewController:(UIViewController *)viewController
+                                     withTitle:(NSString *)requestTitle
+                                       message:(NSString *)message
+                               denyButtonTitle:(NSString *)denyButtonTitle
+                              grantButtonTitle:(NSString *)grantButtonTitle
+                             completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
+    [self showAVPermissionsInViewController:viewController
+                                   withType:ClusterAVAuthorizationTypeCamera
+                                      title:requestTitle
+                                    message:message
+                            denyButtonTitle:denyButtonTitle
+                           grantButtonTitle:grantButtonTitle
+                          completionHandler:completionHandler];
 }
 
 
@@ -383,14 +445,29 @@ static ClusterPrePermissions *__sharedInstance;
                            grantButtonTitle:(NSString *)grantButtonTitle
                           completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
-    [self showAVPermissionsWithType:ClusterAVAuthorizationTypeMicrophone
-                              title:requestTitle
-                            message:message
-                    denyButtonTitle:denyButtonTitle
-                   grantButtonTitle:grantButtonTitle
-                  completionHandler:completionHandler];
+    [self showMicrophonePermissionsInViewController:nil
+                                          withTitle:requestTitle
+                                            message:message
+                                    denyButtonTitle:denyButtonTitle
+                                   grantButtonTitle:grantButtonTitle
+                                  completionHandler:completionHandler];
 }
 
+- (void) showMicrophonePermissionsInViewController:(UIViewController *)viewController
+                                         withTitle:(NSString *)requestTitle
+                                           message:(NSString *)message
+                                   denyButtonTitle:(NSString *)denyButtonTitle
+                                  grantButtonTitle:(NSString *)grantButtonTitle
+                                 completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
+    [self showAVPermissionsInViewController:viewController
+                                   withType:ClusterAVAuthorizationTypeMicrophone
+                                      title:requestTitle
+                                    message:message
+                            denyButtonTitle:denyButtonTitle
+                           grantButtonTitle:grantButtonTitle
+                          completionHandler:completionHandler];
+}
 
 - (void) showActualAVPermissionAlertWithType:(ClusterAVAuthorizationType)mediaType
 {
