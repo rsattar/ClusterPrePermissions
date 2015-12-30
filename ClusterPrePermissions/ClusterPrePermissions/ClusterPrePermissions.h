@@ -225,14 +225,29 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
                                   message:(NSString *)message
                           denyButtonTitle:(NSString *)denyButtonTitle
                          grantButtonTitle:(NSString *)grantButtonTitle
-                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler __attribute__((deprecated("Replaced by -showLocationPermissionsInViewController:withTitle:message:denyButtonTitle:grantButtonTitle:completionHandler:")));
+
+- (void) showLocationPermissionsInViewController:(UIViewController *)viewController
+                                       withTitle:(NSString *)requestTitle
+                                         message:(NSString *)message
+                                 denyButtonTitle:(NSString *)denyButtonTitle
+                                grantButtonTitle:(NSString *)grantButtonTitle
+                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 - (void) showLocationPermissionsForAuthorizationType:(ClusterLocationAuthorizationType)authorizationType
                                                title:(NSString *)requestTitle
                                              message:(NSString *)message
                                      denyButtonTitle:(NSString *)denyButtonTitle
                                     grantButtonTitle:(NSString *)grantButtonTitle
-                                   completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+                                   completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler __attribute__((deprecated("Replaced by -showLocationPermissionsInViewController:forAuthorizationType:withTitle:message:denyButtonTitle:grantButtonTitle:completionHandler:")));
+
+- (void) showLocationPermissionsInViewController:(UIViewController *)viewController
+                            forAuthorizationType:(ClusterLocationAuthorizationType)authorizationType
+                                       withTitle:(NSString *)requestTitle
+                                         message:(NSString *)message
+                                 denyButtonTitle:(NSString *)denyButtonTitle
+                                grantButtonTitle:(NSString *)grantButtonTitle
+                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 /**
  * @description (Experimental) This checks for your current push notifications 

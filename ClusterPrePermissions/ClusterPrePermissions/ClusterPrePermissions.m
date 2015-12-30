@@ -561,7 +561,6 @@ static ClusterPrePermissions *__sharedInstance;
                                                                       style:UIAlertActionStyleCancel
                                                                     handler:^(UIAlertAction * _Nonnull action) {
                                                                     [self firePhotoPermissionCompletionHandler];
-                
             }];
             
             [alertController addAction:denyAlertAction];
@@ -700,7 +699,6 @@ static ClusterPrePermissions *__sharedInstance;
                                                                       style:UIAlertActionStyleCancel
                                                                     handler:^(UIAlertAction * _Nonnull action) {
                                                                         [self fireContactPermissionCompletionHandler];
-                                                                        
                                                                     }];
             
             [alertController addAction:denyAlertAction];
@@ -844,7 +842,6 @@ static ClusterPrePermissions *__sharedInstance;
                                                                       style:UIAlertActionStyleCancel
                                                                     handler:^(UIAlertAction * _Nonnull action) {
                                                                         [self fireEventPermissionCompletionHandler:eventType];
-                                                                        
                                                                     }];
             
             [alertController addAction:denyAlertAction];
@@ -936,12 +933,28 @@ static ClusterPrePermissions *__sharedInstance;
                          grantButtonTitle:(NSString *)grantButtonTitle
                         completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
-    [self showLocationPermissionsForAuthorizationType:ClusterLocationAuthorizationTypeAlways
-                                                title:requestTitle
-                                              message:message
-                                      denyButtonTitle:denyButtonTitle
-                                     grantButtonTitle:grantButtonTitle
-                                    completionHandler:completionHandler];
+    [self showLocationPermissionsInViewController:nil
+                                        withTitle:requestTitle
+                                          message:message
+                                  denyButtonTitle:denyButtonTitle
+                                 grantButtonTitle:grantButtonTitle
+                                completionHandler:completionHandler];
+}
+
+- (void) showLocationPermissionsInViewController:(UIViewController *)viewController
+                                       withTitle:(NSString *)requestTitle
+                                         message:(NSString *)message
+                                 denyButtonTitle:(NSString *)denyButtonTitle
+                                grantButtonTitle:(NSString *)grantButtonTitle
+                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
+    [self showLocationPermissionsInViewController:viewController
+                             forAuthorizationType:ClusterLocationAuthorizationTypeAlways
+                                        withTitle:requestTitle
+                                          message:message
+                                  denyButtonTitle:denyButtonTitle
+                                 grantButtonTitle:grantButtonTitle
+                                completionHandler:completionHandler];
 }
 
 - (void) showLocationPermissionsForAuthorizationType:(ClusterLocationAuthorizationType)authorizationType
@@ -951,22 +964,70 @@ static ClusterPrePermissions *__sharedInstance;
                                     grantButtonTitle:(NSString *)grantButtonTitle
                                    completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
+    [self showLocationPermissionsInViewController:nil
+                             forAuthorizationType:authorizationType
+                                        withTitle:requestTitle
+                                          message:message
+                                  denyButtonTitle:denyButtonTitle
+                                 grantButtonTitle:grantButtonTitle
+                                completionHandler:completionHandler];
+}
+
+- (void) showLocationPermissionsInViewController:(UIViewController *)viewController
+                            forAuthorizationType:(ClusterLocationAuthorizationType)authorizationType
+                                       withTitle:(NSString *)requestTitle
+                                         message:(NSString *)message
+                                 denyButtonTitle:(NSString *)denyButtonTitle
+                                grantButtonTitle:(NSString *)grantButtonTitle
+                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
     if (requestTitle.length == 0) {
         requestTitle = @"Access Location?";
     }
     denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
+    
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     if (status == kCLAuthorizationStatusNotDetermined) {
-        self.locationPermissionCompletionHandler = completionHandler;
-        self.locationAuthorizationType = authorizationType;
-        self.preLocationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                         message:message
-                                                                        delegate:self
-                                                               cancelButtonTitle:denyButtonTitle
-                                                               otherButtonTitles:grantButtonTitle, nil];
-        [self.preLocationPermissionAlertView show];
+        
+        if ([UIAlertController class]
+            && [viewController isKindOfClass:[UIViewController class]]) {
+            
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:requestTitle
+                                                                                     message:message
+                                                                              preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction *denyAlertAction = [UIAlertAction actionWithTitle:denyButtonTitle
+                                                                      style:UIAlertActionStyleCancel
+                                                                    handler:^(UIAlertAction * _Nonnull action) {
+                                                                        [self fireLocationPermissionCompletionHandler];
+                                                                    }];
+            
+            [alertController addAction:denyAlertAction];
+            
+            UIAlertAction *grantAlertAction = [UIAlertAction actionWithTitle:grantButtonTitle
+                                                                       style:UIAlertActionStyleDefault
+                                                                     handler:^(UIAlertAction * _Nonnull action) {
+                                                                         [self showActualLocationPermissionAlert];
+                                                                     }];
+            
+            [alertController addAction:grantAlertAction];
+            
+            [viewController presentViewController:alertController
+                                         animated:YES
+                                       completion:nil];
+            
+        } else {
+            self.locationPermissionCompletionHandler = completionHandler;
+            self.locationAuthorizationType = authorizationType;
+            self.preLocationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                             message:message
+                                                                            delegate:self
+                                                                   cancelButtonTitle:denyButtonTitle
+                                                                   otherButtonTitles:grantButtonTitle, nil];
+            [self.preLocationPermissionAlertView show];
+        }
+        
     } else {
         if (completionHandler) {
             completionHandler(([self locationAuthorizationStatusPermitsAccess:status]),
