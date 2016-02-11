@@ -33,7 +33,7 @@ Even though it seems annoying to ask twice, at Cluster we almost completely elim
 
 # Adding ClusterPrePermissions to your project
 
-## Cocoapods
+## CocoaPods
 
 [CocoaPods](http://cocoapods.org/) is the recommended way to add ClusterPrePermissions to your project.
 
