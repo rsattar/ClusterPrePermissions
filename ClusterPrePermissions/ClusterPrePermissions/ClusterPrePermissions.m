@@ -262,7 +262,7 @@ static ClusterPrePermissions *__sharedInstance;
     
     ClusterAuthorizationStatus status = [ClusterPrePermissions pushNotificationPermissionAuthorizationStatus];
     if (status == ClusterAuthorizationStatusUnDetermined) {
-        
+        self.pushNotificationPermissionCompletionHandler = completionHandler;
         if ([UIAlertController class]
             && [viewController isKindOfClass:[UIViewController class]]) {
             
@@ -279,7 +279,6 @@ static ClusterPrePermissions *__sharedInstance;
                                       }];
             
         } else {
-            self.pushNotificationPermissionCompletionHandler = completionHandler;
             self.requestedPushNotificationTypes = requestedType;
             self.prePushNotificationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
                                                                                      message:message
@@ -396,7 +395,7 @@ static ClusterPrePermissions *__sharedInstance;
     
     AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:[self AVEquivalentMediaType:mediaType]];
     if (status == AVAuthorizationStatusNotDetermined) {
-        
+        self.avPermissionCompletionHandler = completionHandler;
         if ([UIAlertController class]
             && [viewController isKindOfClass:[UIViewController class]]) {
             
@@ -413,7 +412,6 @@ static ClusterPrePermissions *__sharedInstance;
                                       }];
             
         } else {
-            self.avPermissionCompletionHandler = completionHandler;
             self.preAVPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
                                                                        message:message
                                                                       delegate:self
@@ -573,7 +571,7 @@ static ClusterPrePermissions *__sharedInstance;
 
     ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
     if (status == ALAuthorizationStatusNotDetermined) {
-        
+        self.photoPermissionCompletionHandler = completionHandler;
         if ([UIAlertController class]
             && [viewController isKindOfClass:[UIViewController class]]) {
             
@@ -590,7 +588,6 @@ static ClusterPrePermissions *__sharedInstance;
             }];
             
         } else {
-            self.photoPermissionCompletionHandler = completionHandler;
             self.prePhotoPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
                                                                           message:message
                                                                          delegate:self
@@ -699,7 +696,7 @@ static ClusterPrePermissions *__sharedInstance;
     
     
     if (status == ClusterContactsAuthorizationStatusNotDetermined) {
-        
+        self.contactPermissionCompletionHandler = completionHandler;
         if ([UIAlertController class]
             && [viewController isKindOfClass:[UIViewController class]]) {
             
@@ -716,7 +713,6 @@ static ClusterPrePermissions *__sharedInstance;
                                       }];
             
         } else {
-            self.contactPermissionCompletionHandler = completionHandler;
             self.preContactPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
                                                                             message:message
                                                                            delegate:self
@@ -830,7 +826,7 @@ static ClusterPrePermissions *__sharedInstance;
     
     EKAuthorizationStatus status = [EKEventStore authorizationStatusForEntityType:[self EKEquivalentEventType:eventType]];
     if (status == EKAuthorizationStatusNotDetermined) {
-        
+        self.eventPermissionCompletionHandler = completionHandler;
         if ([UIAlertController class]
             && [viewController isKindOfClass:[UIViewController class]]) {
             
@@ -847,7 +843,6 @@ static ClusterPrePermissions *__sharedInstance;
                                       }];
             
         } else {
-            self.eventPermissionCompletionHandler = completionHandler;
             self.preEventPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
                                                                           message:message
                                                                          delegate:self
@@ -977,7 +972,7 @@ static ClusterPrePermissions *__sharedInstance;
     
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     if (status == kCLAuthorizationStatusNotDetermined) {
-        
+        self.locationPermissionCompletionHandler = completionHandler;
         if ([UIAlertController class]
             && [viewController isKindOfClass:[UIViewController class]]) {
             
@@ -994,7 +989,6 @@ static ClusterPrePermissions *__sharedInstance;
                                       }];
             
         } else {
-            self.locationPermissionCompletionHandler = completionHandler;
             self.locationAuthorizationType = authorizationType;
             self.preLocationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
                                                                              message:message
