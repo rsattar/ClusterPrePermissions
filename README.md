@@ -10,6 +10,12 @@ Cluster's reusable pre-permissions utility that lets developers ask the users on
 - Events
 - Location
 
+
+## Update 
+
+_With Apple's new review guidelines, you'll need to include usage descriptions for *each* of the frameworks that ClusterPrePermissions supports, whether or not you're actually using them. See [Issue #34](https://github.com/clusterinc/ClusterPrePermissions/issues/34#issuecomment-257781081) for more info._
+
+
 # Why use Pre-Permissions?
 
 On iOS, when your code tries to access the Camera Roll or the Address Book, the system automatically shows an alert to the user. 
