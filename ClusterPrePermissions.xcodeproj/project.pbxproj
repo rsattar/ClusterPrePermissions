@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		064DCAC11C0323A7002515B1 /* ClusterAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 064DCAC01C0323A7002515B1 /* ClusterAlertView.m */; };
 		65C599CA18F35A4500AE202C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65C599C918F35A4500AE202C /* Foundation.framework */; };
 		65C599CC18F35A4500AE202C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65C599CB18F35A4500AE202C /* CoreGraphics.framework */; };
 		65C599CE18F35A4500AE202C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65C599CD18F35A4500AE202C /* UIKit.framework */; };
@@ -38,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		064DCABF1C0323A7002515B1 /* ClusterAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClusterAlertView.h; path = ClusterPrePermissions/ClusterPrePermissions/ClusterAlertView.h; sourceTree = "<group>"; };
+		064DCAC01C0323A7002515B1 /* ClusterAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ClusterAlertView.m; path = ClusterPrePermissions/ClusterPrePermissions/ClusterAlertView.m; sourceTree = "<group>"; };
 		65C599C618F35A4500AE202C /* ClusterPrePermissions.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClusterPrePermissions.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		65C599C918F35A4500AE202C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		65C599CB18F35A4500AE202C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -167,6 +170,8 @@
 			children = (
 				65D1AF1518F4B3BA005ACA29 /* ClusterPrePermissions.h */,
 				65D1AF1618F4B3BA005ACA29 /* ClusterPrePermissions.m */,
+				064DCABF1C0323A7002515B1 /* ClusterAlertView.h */,
+				064DCAC01C0323A7002515B1 /* ClusterAlertView.m */,
 			);
 			name = ClusterPrePermissions;
 			sourceTree = "<group>";
@@ -271,6 +276,7 @@
 			files = (
 				65C599FF18F36ED400AE202C /* PermissionsTestViewController.m in Sources */,
 				65C599D618F35A4500AE202C /* main.m in Sources */,
+				064DCAC11C0323A7002515B1 /* ClusterAlertView.m in Sources */,
 				65D1AF1718F4B3BA005ACA29 /* ClusterPrePermissions.m in Sources */,
 				65C599DA18F35A4500AE202C /* CLAppDelegate.m in Sources */,
 			);
@@ -395,6 +401,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ClusterPrePermissions/ClusterPrePermissions-Prefix.pch";
 				INFOPLIST_FILE = "ClusterPrePermissions/ClusterPrePermissions-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.getcluster.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = ClusterPrePermissions;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -410,6 +417,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ClusterPrePermissions/ClusterPrePermissions-Prefix.pch";
 				INFOPLIST_FILE = "ClusterPrePermissions/ClusterPrePermissions-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.getcluster.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = ClusterPrePermissions;
 				TARGETED_DEVICE_FAMILY = "1,2";
