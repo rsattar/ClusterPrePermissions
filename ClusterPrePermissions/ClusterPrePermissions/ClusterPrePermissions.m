@@ -237,22 +237,56 @@ static ClusterPrePermissions *__sharedInstance;
                                 grantButtonTitle:(NSString *)grantButtonTitle
                                completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
+    [self showPushNotificationInViewController:nil
+                           permissionsWithType:requestedType
+                                         title:requestTitle
+                                       message:message
+                               denyButtonTitle:denyButtonTitle
+                              grantButtonTitle:grantButtonTitle
+                             completionHandler:completionHandler];
+}
+
+- (void) showPushNotificationInViewController:(UIViewController *)viewController
+                          permissionsWithType:(ClusterPushNotificationType)requestedType
+                                        title:(NSString *)requestTitle
+                                      message:(NSString *)message
+                              denyButtonTitle:(NSString *)denyButtonTitle
+                             grantButtonTitle:(NSString *)grantButtonTitle
+                            completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
     if (requestTitle.length == 0) {
         requestTitle = @"Enable Push Notifications?";
     }
     denyButtonTitle = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
+    
     ClusterAuthorizationStatus status = [ClusterPrePermissions pushNotificationPermissionAuthorizationStatus];
     if (status == ClusterAuthorizationStatusUnDetermined) {
         self.pushNotificationPermissionCompletionHandler = completionHandler;
-        self.requestedPushNotificationTypes = requestedType;
-        self.prePushNotificationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                                 message:message
-                                                                                delegate:self
-                                                                       cancelButtonTitle:denyButtonTitle
-                                                                       otherButtonTitles:grantButtonTitle, nil];
-        [self.prePushNotificationPermissionAlertView show];
+        if ([UIAlertController class]
+            && [viewController isKindOfClass:[UIViewController class]]) {
+            
+            [self presentAlertControllerInViewController:viewController
+                                               withTitle:requestTitle
+                                                 message:message
+                                         denyButtonTitle:denyButtonTitle
+                                       denyButtionAction:^(UIAlertAction *action) {
+                                           [self firePushNotificationPermissionCompletionHandler];
+                                       }
+                                        grantButtonTitle:grantButtonTitle
+                                      grantButtionAction:^(UIAlertAction *action) {
+                                          [self showActualPushNotificationPermissionAlert];
+                                      }];
+            
+        } else {
+            self.requestedPushNotificationTypes = requestedType;
+            self.prePushNotificationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                                     message:message
+                                                                                    delegate:self
+                                                                           cancelButtonTitle:denyButtonTitle
+                                                                           otherButtonTitles:grantButtonTitle, nil];
+            [self.prePushNotificationPermissionAlertView show];
+        }
     } else {
         if (completionHandler) {
             completionHandler((status == ClusterAuthorizationStatusUnDetermined),
@@ -328,12 +362,29 @@ static ClusterPrePermissions *__sharedInstance;
                   grantButtonTitle:(NSString *)grantButtonTitle
                  completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
+    [self showAVPermissionsInViewController:nil
+                                   withType:mediaType
+                                      title:requestTitle
+                                    message:message
+                            denyButtonTitle:denyButtonTitle
+                           grantButtonTitle:grantButtonTitle
+                          completionHandler:completionHandler];
+}
+
+- (void) showAVPermissionsInViewController:(UIViewController *)viewController
+                                  withType:(ClusterAVAuthorizationType)mediaType
+                                     title:(NSString *)requestTitle
+                                   message:(NSString *)message
+                           denyButtonTitle:(NSString *)denyButtonTitle
+                          grantButtonTitle:(NSString *)grantButtonTitle
+                         completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
     if (requestTitle.length == 0) {
         switch (mediaType) {
             case ClusterAVAuthorizationTypeCamera:
                 requestTitle = @"Access Camera?";
                 break;
-
+                
             default:
                 requestTitle = @"Access Microphone?";
                 break;
@@ -341,17 +392,34 @@ static ClusterPrePermissions *__sharedInstance;
     }
     denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
+    
     AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:[self AVEquivalentMediaType:mediaType]];
     if (status == AVAuthorizationStatusNotDetermined) {
         self.avPermissionCompletionHandler = completionHandler;
-        self.preAVPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                   message:message
-                                                                  delegate:self
-                                                         cancelButtonTitle:denyButtonTitle
-                                                         otherButtonTitles:grantButtonTitle, nil];
-        self.preAVPermissionAlertView.tag = mediaType;
-        [self.preAVPermissionAlertView show];
+        if ([UIAlertController class]
+            && [viewController isKindOfClass:[UIViewController class]]) {
+            
+            [self presentAlertControllerInViewController:viewController
+                                               withTitle:requestTitle
+                                                 message:message
+                                         denyButtonTitle:denyButtonTitle
+                                       denyButtionAction:^(UIAlertAction *action) {
+                                           [self fireAVPermissionCompletionHandlerWithType:mediaType];
+                                       }
+                                        grantButtonTitle:grantButtonTitle
+                                      grantButtionAction:^(UIAlertAction *action) {
+                                          [self showActualAVPermissionAlertWithType:mediaType];
+                                      }];
+            
+        } else {
+            self.preAVPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                       message:message
+                                                                      delegate:self
+                                                             cancelButtonTitle:denyButtonTitle
+                                                             otherButtonTitles:grantButtonTitle, nil];
+            self.preAVPermissionAlertView.tag = mediaType;
+            [self.preAVPermissionAlertView show];
+        }
     } else {
         if (completionHandler) {
             completionHandler((status == AVAuthorizationStatusAuthorized),
@@ -368,12 +436,28 @@ static ClusterPrePermissions *__sharedInstance;
                        grantButtonTitle:(NSString *)grantButtonTitle
                       completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
-    [self showAVPermissionsWithType:ClusterAVAuthorizationTypeCamera
-                              title:requestTitle
-                            message:message
-                    denyButtonTitle:denyButtonTitle
-                   grantButtonTitle:grantButtonTitle
-                  completionHandler:completionHandler];
+    [self showCameraPermissionsInViewController:nil
+                                      withTitle:requestTitle
+                                        message:message
+                                denyButtonTitle:denyButtonTitle
+                               grantButtonTitle:grantButtonTitle
+                              completionHandler:completionHandler];
+}
+
+- (void) showCameraPermissionsInViewController:(UIViewController *)viewController
+                                     withTitle:(NSString *)requestTitle
+                                       message:(NSString *)message
+                               denyButtonTitle:(NSString *)denyButtonTitle
+                              grantButtonTitle:(NSString *)grantButtonTitle
+                             completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
+    [self showAVPermissionsInViewController:viewController
+                                   withType:ClusterAVAuthorizationTypeCamera
+                                      title:requestTitle
+                                    message:message
+                            denyButtonTitle:denyButtonTitle
+                           grantButtonTitle:grantButtonTitle
+                          completionHandler:completionHandler];
 }
 
 
@@ -383,14 +467,29 @@ static ClusterPrePermissions *__sharedInstance;
                            grantButtonTitle:(NSString *)grantButtonTitle
                           completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
-    [self showAVPermissionsWithType:ClusterAVAuthorizationTypeMicrophone
-                              title:requestTitle
-                            message:message
-                    denyButtonTitle:denyButtonTitle
-                   grantButtonTitle:grantButtonTitle
-                  completionHandler:completionHandler];
+    [self showMicrophonePermissionsInViewController:nil
+                                          withTitle:requestTitle
+                                            message:message
+                                    denyButtonTitle:denyButtonTitle
+                                   grantButtonTitle:grantButtonTitle
+                                  completionHandler:completionHandler];
 }
 
+- (void) showMicrophonePermissionsInViewController:(UIViewController *)viewController
+                                         withTitle:(NSString *)requestTitle
+                                           message:(NSString *)message
+                                   denyButtonTitle:(NSString *)denyButtonTitle
+                                  grantButtonTitle:(NSString *)grantButtonTitle
+                                 completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
+    [self showAVPermissionsInViewController:viewController
+                                   withType:ClusterAVAuthorizationTypeMicrophone
+                                      title:requestTitle
+                                    message:message
+                            denyButtonTitle:denyButtonTitle
+                           grantButtonTitle:grantButtonTitle
+                          completionHandler:completionHandler];
+}
 
 - (void) showActualAVPermissionAlertWithType:(ClusterAVAuthorizationType)mediaType
 {
@@ -448,6 +547,22 @@ static ClusterPrePermissions *__sharedInstance;
                       grantButtonTitle:(NSString *)grantButtonTitle
                      completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
+    [self showPhotoPermissionsInViewController:nil
+                                     withTitle:requestTitle
+                                       message:message
+                               denyButtonTitle:denyButtonTitle
+                              grantButtonTitle:grantButtonTitle
+                             completionHandler:completionHandler];
+}
+
+- (void) showPhotoPermissionsInViewController:(UIViewController *)viewController
+                                    withTitle:(NSString *)requestTitle
+                                      message:(NSString *)message
+                              denyButtonTitle:(NSString *)denyButtonTitle
+                             grantButtonTitle:(NSString *)grantButtonTitle
+                            completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+
+{
     if (requestTitle.length == 0) {
         requestTitle = @"Access Photos?";
     }
@@ -457,12 +572,30 @@ static ClusterPrePermissions *__sharedInstance;
     ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
     if (status == ALAuthorizationStatusNotDetermined) {
         self.photoPermissionCompletionHandler = completionHandler;
-        self.prePhotoPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                      message:message
-                                                                     delegate:self
-                                                            cancelButtonTitle:denyButtonTitle
-                                                            otherButtonTitles:grantButtonTitle, nil];
-        [self.prePhotoPermissionAlertView show];
+        if ([UIAlertController class]
+            && [viewController isKindOfClass:[UIViewController class]]) {
+            
+            [self presentAlertControllerInViewController:viewController
+                                               withTitle:requestTitle
+                                                 message:message
+                                         denyButtonTitle:denyButtonTitle
+                                       denyButtionAction:^(UIAlertAction *action) {
+                                           [self firePhotoPermissionCompletionHandler];
+            }
+                                        grantButtonTitle:grantButtonTitle
+                                      grantButtionAction:^(UIAlertAction *action) {
+                                          [self showActualPhotoPermissionAlert];
+            }];
+            
+        } else {
+            self.prePhotoPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                          message:message
+                                                                         delegate:self
+                                                                cancelButtonTitle:denyButtonTitle
+                                                                otherButtonTitles:grantButtonTitle, nil];
+            [self.prePhotoPermissionAlertView show];
+        }
+        
     } else {
         if (completionHandler) {
             completionHandler((status == ALAuthorizationStatusAuthorized),
@@ -538,6 +671,21 @@ static ClusterPrePermissions *__sharedInstance;
                          grantButtonTitle:(NSString *)grantButtonTitle
                         completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
+    [self showContactsPermissionsInViewController:nil
+                                        withTitle:requestTitle
+                                          message:message
+                                  denyButtonTitle:denyButtonTitle
+                                 grantButtonTitle:grantButtonTitle
+                                completionHandler:completionHandler];
+}
+
+- (void) showContactsPermissionsInViewController:(UIViewController *)viewController
+                                       withTitle:(NSString *)requestTitle
+                                         message:(NSString *)message
+                                 denyButtonTitle:(NSString *)denyButtonTitle
+                                grantButtonTitle:(NSString *)grantButtonTitle
+                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
     if (requestTitle.length == 0) {
         requestTitle = @"Access Contacts?";
     }
@@ -549,12 +697,29 @@ static ClusterPrePermissions *__sharedInstance;
     
     if (status == ClusterContactsAuthorizationStatusNotDetermined) {
         self.contactPermissionCompletionHandler = completionHandler;
-        self.preContactPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                        message:message
-                                                                       delegate:self
-                                                              cancelButtonTitle:denyButtonTitle
-                                                              otherButtonTitles:grantButtonTitle, nil];
-        [self.preContactPermissionAlertView show];
+        if ([UIAlertController class]
+            && [viewController isKindOfClass:[UIViewController class]]) {
+            
+            [self presentAlertControllerInViewController:viewController
+                                               withTitle:requestTitle
+                                                 message:message
+                                         denyButtonTitle:denyButtonTitle
+                                       denyButtionAction:^(UIAlertAction *action) {
+                                           [self fireContactPermissionCompletionHandler];
+                                       }
+                                        grantButtonTitle:grantButtonTitle
+                                      grantButtionAction: ^(UIAlertAction *action) {
+                                          [self showActualContactPermissionAlert];
+                                      }];
+            
+        } else {
+            self.preContactPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                            message:message
+                                                                           delegate:self
+                                                                  cancelButtonTitle:denyButtonTitle
+                                                                  otherButtonTitles:grantButtonTitle, nil];
+            [self.preContactPermissionAlertView show];
+        }
     } else {
         if (completionHandler) {
             completionHandler(status == ClusterContactsAuthorizationStatusAuthorized,
@@ -628,12 +793,29 @@ static ClusterPrePermissions *__sharedInstance;
                      grantButtonTitle:(NSString *)grantButtonTitle
                     completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
+    [self showEventPermissionsInViewController:nil
+                                      withType:eventType
+                                         title:requestTitle
+                                       message:message
+                               denyButtonTitle:denyButtonTitle
+                              grantButtonTitle:grantButtonTitle
+                             completionHandler:completionHandler];
+}
+
+- (void) showEventPermissionsInViewController:(UIViewController *)viewController
+                                     withType:(ClusterEventAuthorizationType)eventType
+                                        title:(NSString *)requestTitle
+                                      message:(NSString *)message
+                              denyButtonTitle:(NSString *)denyButtonTitle
+                             grantButtonTitle:(NSString *)grantButtonTitle
+                            completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
     if (requestTitle.length == 0) {
         switch (eventType) {
             case ClusterEventAuthorizationTypeEvent:
                 requestTitle = @"Access Calendar?";
                 break;
-
+                
             default:
                 requestTitle = @"Access Reminders?";
                 break;
@@ -641,17 +823,34 @@ static ClusterPrePermissions *__sharedInstance;
     }
     denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
+    
     EKAuthorizationStatus status = [EKEventStore authorizationStatusForEntityType:[self EKEquivalentEventType:eventType]];
     if (status == EKAuthorizationStatusNotDetermined) {
         self.eventPermissionCompletionHandler = completionHandler;
-        self.preEventPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                      message:message
-                                                                     delegate:self
-                                                            cancelButtonTitle:denyButtonTitle
-                                                            otherButtonTitles:grantButtonTitle, nil];
-        self.preEventPermissionAlertView.tag = eventType;
-        [self.preEventPermissionAlertView show];
+        if ([UIAlertController class]
+            && [viewController isKindOfClass:[UIViewController class]]) {
+            
+            [self presentAlertControllerInViewController:viewController
+                                               withTitle:requestTitle
+                                                 message:message
+                                         denyButtonTitle:denyButtonTitle
+                                       denyButtionAction:^(UIAlertAction *action) {
+                                           [self fireEventPermissionCompletionHandler:eventType];
+                                       }
+                                        grantButtonTitle:grantButtonTitle
+                                      grantButtionAction:^(UIAlertAction *action) {
+                                          [self showActualEventPermissionAlert:eventType];
+                                      }];
+            
+        } else {
+            self.preEventPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                          message:message
+                                                                         delegate:self
+                                                                cancelButtonTitle:denyButtonTitle
+                                                                otherButtonTitles:grantButtonTitle, nil];
+            self.preEventPermissionAlertView.tag = eventType;
+            [self.preEventPermissionAlertView show];
+        }
     } else {
         if (completionHandler) {
             completionHandler((status == EKAuthorizationStatusAuthorized),
@@ -660,7 +859,6 @@ static ClusterPrePermissions *__sharedInstance;
         }
     }
 }
-
 
 - (void) showActualEventPermissionAlert:(ClusterEventAuthorizationType)eventType
 {
@@ -718,12 +916,28 @@ static ClusterPrePermissions *__sharedInstance;
                          grantButtonTitle:(NSString *)grantButtonTitle
                         completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
-    [self showLocationPermissionsForAuthorizationType:ClusterLocationAuthorizationTypeAlways
-                                                title:requestTitle
-                                              message:message
-                                      denyButtonTitle:denyButtonTitle
-                                     grantButtonTitle:grantButtonTitle
-                                    completionHandler:completionHandler];
+    [self showLocationPermissionsInViewController:nil
+                                        withTitle:requestTitle
+                                          message:message
+                                  denyButtonTitle:denyButtonTitle
+                                 grantButtonTitle:grantButtonTitle
+                                completionHandler:completionHandler];
+}
+
+- (void) showLocationPermissionsInViewController:(UIViewController *)viewController
+                                       withTitle:(NSString *)requestTitle
+                                         message:(NSString *)message
+                                 denyButtonTitle:(NSString *)denyButtonTitle
+                                grantButtonTitle:(NSString *)grantButtonTitle
+                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
+    [self showLocationPermissionsInViewController:viewController
+                             forAuthorizationType:ClusterLocationAuthorizationTypeAlways
+                                        withTitle:requestTitle
+                                          message:message
+                                  denyButtonTitle:denyButtonTitle
+                                 grantButtonTitle:grantButtonTitle
+                                completionHandler:completionHandler];
 }
 
 - (void) showLocationPermissionsForAuthorizationType:(ClusterLocationAuthorizationType)authorizationType
@@ -733,22 +947,57 @@ static ClusterPrePermissions *__sharedInstance;
                                     grantButtonTitle:(NSString *)grantButtonTitle
                                    completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
 {
+    [self showLocationPermissionsInViewController:nil
+                             forAuthorizationType:authorizationType
+                                        withTitle:requestTitle
+                                          message:message
+                                  denyButtonTitle:denyButtonTitle
+                                 grantButtonTitle:grantButtonTitle
+                                completionHandler:completionHandler];
+}
+
+- (void) showLocationPermissionsInViewController:(UIViewController *)viewController
+                            forAuthorizationType:(ClusterLocationAuthorizationType)authorizationType
+                                       withTitle:(NSString *)requestTitle
+                                         message:(NSString *)message
+                                 denyButtonTitle:(NSString *)denyButtonTitle
+                                grantButtonTitle:(NSString *)grantButtonTitle
+                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler
+{
     if (requestTitle.length == 0) {
         requestTitle = @"Access Location?";
     }
     denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
+    
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     if (status == kCLAuthorizationStatusNotDetermined) {
         self.locationPermissionCompletionHandler = completionHandler;
-        self.locationAuthorizationType = authorizationType;
-        self.preLocationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
-                                                                         message:message
-                                                                        delegate:self
-                                                               cancelButtonTitle:denyButtonTitle
-                                                               otherButtonTitles:grantButtonTitle, nil];
-        [self.preLocationPermissionAlertView show];
+        if ([UIAlertController class]
+            && [viewController isKindOfClass:[UIViewController class]]) {
+            
+            [self presentAlertControllerInViewController:viewController
+                                               withTitle:requestTitle
+                                                 message:message
+                                         denyButtonTitle:denyButtonTitle
+                                       denyButtionAction:^(UIAlertAction *action) {
+                                           [self fireLocationPermissionCompletionHandler];
+                                       }
+                                        grantButtonTitle:grantButtonTitle
+                                      grantButtionAction:^(UIAlertAction *action) {
+                                          [self showActualLocationPermissionAlert];
+                                      }];
+            
+        } else {
+            self.locationAuthorizationType = authorizationType;
+            self.preLocationPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
+                                                                             message:message
+                                                                            delegate:self
+                                                                   cancelButtonTitle:denyButtonTitle
+                                                                   otherButtonTitles:grantButtonTitle, nil];
+            [self.preLocationPermissionAlertView show];
+        }
+        
     } else {
         if (completionHandler) {
             completionHandler(([self locationAuthorizationStatusPermitsAccess:status]),
@@ -900,6 +1149,45 @@ static ClusterPrePermissions *__sharedInstance;
             break;
     }
     return title;
+}
+
+#pragma mrak - UIAlertController
+
+- (void)presentAlertControllerInViewController:(UIViewController *)viewController
+                                     withTitle:(NSString *)title
+                                       message:(NSString *)message
+                               denyButtonTitle:(NSString *)denyButtonTitle
+                             denyButtionAction:(void (^)(UIAlertAction *action))denyButtionAction
+                              grantButtonTitle:(NSString *)grantButtonTitle
+                            grantButtionAction:(void (^)(UIAlertAction *action))grantButtionAction
+{
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title
+                                                                             message:message
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *denyAlertAction = [UIAlertAction actionWithTitle:denyButtonTitle
+                                                              style:UIAlertActionStyleCancel
+                                                            handler:^(UIAlertAction * _Nonnull action) {
+                                                                if (denyButtionAction) {
+                                                                    denyButtionAction(action);
+                                                                }
+                                                            }];
+    
+    [alertController addAction:denyAlertAction];
+    
+    UIAlertAction *grantAlertAction = [UIAlertAction actionWithTitle:grantButtonTitle
+                                                               style:UIAlertActionStyleDefault
+                                                             handler:^(UIAlertAction * _Nonnull action) {
+                                                                 if (grantButtionAction) {
+                                                                     grantButtionAction(action);
+                                                                 }
+                                                             }];
+    
+    [alertController addAction:grantAlertAction];
+    
+    [viewController presentViewController:alertController
+                                 animated:YES
+                               completion:nil];
 }
 
 @end

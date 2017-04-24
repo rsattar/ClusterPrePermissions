@@ -143,51 +143,111 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
                            message:(NSString *)message
                    denyButtonTitle:(NSString *)denyButtonTitle
                   grantButtonTitle:(NSString *)grantButtonTitle
-                completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+                completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler  __attribute__((deprecated("Replaced by -showAVPermissionsInViewController:withType:title:message:denyButtonTitle:grantButtonTitle:completionHandler:")));
+
+- (void) showAVPermissionsInViewController:(UIViewController *)viewController
+                                  withType:(ClusterAVAuthorizationType)mediaType
+                                     title:(NSString *)requestTitle
+                                   message:(NSString *)message
+                           denyButtonTitle:(NSString *)denyButtonTitle
+                          grantButtonTitle:(NSString *)grantButtonTitle
+                         completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 - (void) showCameraPermissionsWithTitle:(NSString *)requestTitle
                                 message:(NSString *)message
                         denyButtonTitle:(NSString *)denyButtonTitle
                        grantButtonTitle:(NSString *)grantButtonTitle
-                      completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+                      completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler  __attribute__((deprecated("Replaced by -showCameraPermissionsInViewController:withTitle:message:denyButtonTitle:grantButtonTitle:completionHandler:")));
+
+- (void) showCameraPermissionsInViewController:(UIViewController *)viewController
+                                     withTitle:(NSString *)requestTitle
+                                       message:(NSString *)message
+                               denyButtonTitle:(NSString *)denyButtonTitle
+                              grantButtonTitle:(NSString *)grantButtonTitle
+                             completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 - (void) showMicrophonePermissionsWithTitle:(NSString *)requestTitle
                                     message:(NSString *)message
                             denyButtonTitle:(NSString *)denyButtonTitle
                            grantButtonTitle:(NSString *)grantButtonTitle
-                          completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+                          completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler __attribute__((deprecated("Replaced by -showMicrophonePermissionsInViewController:withTitle:message:denyButtonTitle:grantButtonTitle:completionHandler:")));
+
+- (void) showMicrophonePermissionsInViewController:(UIViewController *)viewController
+                                         withTitle:(NSString *)requestTitle
+                                           message:(NSString *)message
+                                   denyButtonTitle:(NSString *)denyButtonTitle
+                                  grantButtonTitle:(NSString *)grantButtonTitle
+                                 completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 - (void) showPhotoPermissionsWithTitle:(NSString *)requestTitle
                                message:(NSString *)message
                        denyButtonTitle:(NSString *)denyButtonTitle
                       grantButtonTitle:(NSString *)grantButtonTitle
+                     completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler __attribute__((deprecated("Replaced by -showPhotoPermissionsInViewController:withTitle:message:denyButtonTitle:grantButtonTitle:completionHandler:")));
+
+- (void) showPhotoPermissionsInViewController:(UIViewController *)viewController
+                                    withTitle:(NSString *)requestTitle
+                                      message:(NSString *)message
+                              denyButtonTitle:(NSString *)denyButtonTitle
+                             grantButtonTitle:(NSString *)grantButtonTitle
                      completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+
 
 - (void) showContactsPermissionsWithTitle:(NSString *)requestTitle
                                   message:(NSString *)message
                           denyButtonTitle:(NSString *)denyButtonTitle
                          grantButtonTitle:(NSString *)grantButtonTitle
-                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler __attribute__((deprecated("Replaced by -showContactsPermissionsInViewController:withTitle:message:denyButtonTitle:grantButtonTitle:completionHandler:")));
+
+- (void) showContactsPermissionsInViewController:(UIViewController *)viewController
+                                       withTitle:(NSString *)requestTitle
+                                         message:(NSString *)message
+                                 denyButtonTitle:(NSString *)denyButtonTitle
+                                grantButtonTitle:(NSString *)grantButtonTitle
+                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 - (void) showEventPermissionsWithType:(ClusterEventAuthorizationType)eventType
                                 Title:(NSString *)requestTitle
                                   message:(NSString *)message
                           denyButtonTitle:(NSString *)denyButtonTitle
                          grantButtonTitle:(NSString *)grantButtonTitle
-                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler __attribute__((deprecated("Replaced by -showEventPermissionsInViewController:withType:title:message:denyButtonTitle:grantButtonTitle:completionHandler:")));
+
+- (void) showEventPermissionsInViewController:(UIViewController *)viewController
+                                     withType:(ClusterEventAuthorizationType)eventType
+                                        title:(NSString *)requestTitle
+                                      message:(NSString *)message
+                              denyButtonTitle:(NSString *)denyButtonTitle
+                             grantButtonTitle:(NSString *)grantButtonTitle
+                            completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 - (void) showLocationPermissionsWithTitle:(NSString *)requestTitle
                                   message:(NSString *)message
                           denyButtonTitle:(NSString *)denyButtonTitle
                          grantButtonTitle:(NSString *)grantButtonTitle
-                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+                        completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler __attribute__((deprecated("Replaced by -showLocationPermissionsInViewController:withTitle:message:denyButtonTitle:grantButtonTitle:completionHandler:")));
+
+- (void) showLocationPermissionsInViewController:(UIViewController *)viewController
+                                       withTitle:(NSString *)requestTitle
+                                         message:(NSString *)message
+                                 denyButtonTitle:(NSString *)denyButtonTitle
+                                grantButtonTitle:(NSString *)grantButtonTitle
+                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 - (void) showLocationPermissionsForAuthorizationType:(ClusterLocationAuthorizationType)authorizationType
                                                title:(NSString *)requestTitle
                                              message:(NSString *)message
                                      denyButtonTitle:(NSString *)denyButtonTitle
                                     grantButtonTitle:(NSString *)grantButtonTitle
-                                   completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+                                   completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler __attribute__((deprecated("Replaced by -showLocationPermissionsInViewController:forAuthorizationType:withTitle:message:denyButtonTitle:grantButtonTitle:completionHandler:")));
+
+- (void) showLocationPermissionsInViewController:(UIViewController *)viewController
+                            forAuthorizationType:(ClusterLocationAuthorizationType)authorizationType
+                                       withTitle:(NSString *)requestTitle
+                                         message:(NSString *)message
+                                 denyButtonTitle:(NSString *)denyButtonTitle
+                                grantButtonTitle:(NSString *)grantButtonTitle
+                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 /**
  * @description (Experimental) This checks for your current push notifications 
@@ -204,6 +264,14 @@ typedef void (^ClusterPrePermissionCompletionHandler)(BOOL hasPermission,
                                          message:(NSString *)message
                                  denyButtonTitle:(NSString *)denyButtonTitle
                                 grantButtonTitle:(NSString *)grantButtonTitle
-                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
+                               completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler __attribute__((deprecated("Replaced by -showPushNotificationInViewController:permissionsWithType:title:message:denyButtonTitle:grantButtonTitle:completionHandler:")));
+
+- (void) showPushNotificationInViewController:(UIViewController *)viewController
+                          permissionsWithType:(ClusterPushNotificationType)requestedType
+                                        title:(NSString *)requestTitle
+                                      message:(NSString *)message
+                              denyButtonTitle:(NSString *)denyButtonTitle
+                             grantButtonTitle:(NSString *)grantButtonTitle
+                            completionHandler:(ClusterPrePermissionCompletionHandler)completionHandler;
 
 @end
