@@ -32,7 +32,7 @@ typedef NS_ENUM(NSInteger, ClusterTitleType) {
 
 #import "ClusterPrePermissions.h"
 
-#import <AddressBook/AddressBook.h>
+#import <Photos/Photos.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <EventKit/EventKit.h>
 #import <CoreLocation/CoreLocation.h>
@@ -87,15 +87,15 @@ static ClusterPrePermissions *__sharedInstance;
 {
     AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:mediaType];
     switch (status) {
-        case AVAuthorizationStatusAuthorized:
+            case AVAuthorizationStatusAuthorized:
             return ClusterAuthorizationStatusAuthorized;
-
-        case AVAuthorizationStatusDenied:
+            
+            case AVAuthorizationStatusDenied:
             return ClusterAuthorizationStatusDenied;
-
-        case AVAuthorizationStatusRestricted:
+            
+            case AVAuthorizationStatusRestricted:
             return ClusterAuthorizationStatusRestricted;
-
+            
         default:
             return ClusterAuthorizationStatusUnDetermined;
     }
@@ -115,63 +115,52 @@ static ClusterPrePermissions *__sharedInstance;
 {
     ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
     switch (status) {
-        case ALAuthorizationStatusAuthorized:
+            case ALAuthorizationStatusAuthorized:
             return ClusterAuthorizationStatusAuthorized;
-
-        case ALAuthorizationStatusDenied:
+            
+            case ALAuthorizationStatusDenied:
             return ClusterAuthorizationStatusDenied;
-
-        case ALAuthorizationStatusRestricted:
+            
+            case ALAuthorizationStatusRestricted:
             return ClusterAuthorizationStatusRestricted;
-
+            
         default:
             return ClusterAuthorizationStatusUnDetermined;
     }
 }
-
 
 + (ClusterAuthorizationStatus) contactsPermissionAuthorizationStatus
 {
-    ClusterContactsAuthorizationType authType;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_9_0
-    //at least iOS 9 code here
-    CNAuthorizationStatus status = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts];
-    authType = (ClusterContactsAuthorizationType)status;
-#else
-    //lower than iOS 9 code here
     ABAuthorizationStatus status = ABAddressBookGetAuthorizationStatus();
-    authType = (ClusterContactsAuthorizationType)status;
-#endif
-    switch (authType) {
-        case ClusterContactsAuthorizationStatusAuthorized:
+    switch (status) {
+            case kABAuthorizationStatusAuthorized:
             return ClusterAuthorizationStatusAuthorized;
             
-        case ClusterContactsAuthorizationStatusDenied:
+            case kABAuthorizationStatusDenied:
             return ClusterAuthorizationStatusDenied;
             
-        case ClusterContactsAuthorizationStatusRestricted:
+            case kABAuthorizationStatusRestricted:
             return ClusterAuthorizationStatusRestricted;
             
         default:
             return ClusterAuthorizationStatusUnDetermined;
     }
 }
-
 
 + (ClusterAuthorizationStatus) eventPermissionAuthorizationStatus:(ClusterEventAuthorizationType)eventType
 {
     EKAuthorizationStatus status = [EKEventStore authorizationStatusForEntityType:
-                  [[ClusterPrePermissions sharedPermissions] EKEquivalentEventType:eventType]];
+                                    [[ClusterPrePermissions sharedPermissions] EKEquivalentEventType:eventType]];
     switch (status) {
-        case EKAuthorizationStatusAuthorized:
+            case EKAuthorizationStatusAuthorized:
             return ClusterAuthorizationStatusAuthorized;
-
-        case EKAuthorizationStatusDenied:
+            
+            case EKAuthorizationStatusDenied:
             return ClusterAuthorizationStatusDenied;
-
-        case EKAuthorizationStatusRestricted:
+            
+            case EKAuthorizationStatusRestricted:
             return ClusterAuthorizationStatusRestricted;
-
+            
         default:
             return ClusterAuthorizationStatusUnDetermined;
     }
@@ -181,16 +170,16 @@ static ClusterPrePermissions *__sharedInstance;
 {
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     switch (status) {
-        case kCLAuthorizationStatusAuthorizedAlways:
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
+            case kCLAuthorizationStatusAuthorizedAlways:
+            case kCLAuthorizationStatusAuthorizedWhenInUse:
             return ClusterAuthorizationStatusAuthorized;
-
-        case kCLAuthorizationStatusDenied:
+            
+            case kCLAuthorizationStatusDenied:
             return ClusterAuthorizationStatusDenied;
-
-        case kCLAuthorizationStatusRestricted:
+            
+            case kCLAuthorizationStatusRestricted:
             return ClusterAuthorizationStatusRestricted;
-
+            
         default:
             return ClusterAuthorizationStatusUnDetermined;
     }
@@ -199,7 +188,7 @@ static ClusterPrePermissions *__sharedInstance;
 + (ClusterAuthorizationStatus) pushNotificationPermissionAuthorizationStatus
 {
     BOOL didAskForPermission = [[NSUserDefaults standardUserDefaults] boolForKey:ClusterPrePermissionsDidAskForPushNotifications];
-
+    
     if (didAskForPermission) {
         if ([[UIApplication sharedApplication] respondsToSelector:@selector(isRegisteredForRemoteNotifications)]) {
             // iOS8+
@@ -209,7 +198,7 @@ static ClusterPrePermissions *__sharedInstance;
                 return ClusterAuthorizationStatusDenied;
             }
         } else {
-
+            
             // Add compiler check to avoid warnings, if deployment target >= 8.0
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_8_0
             // iOS 7
@@ -242,7 +231,7 @@ static ClusterPrePermissions *__sharedInstance;
     }
     denyButtonTitle = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
+    
     ClusterAuthorizationStatus status = [ClusterPrePermissions pushNotificationPermissionAuthorizationStatus];
     if (status == ClusterAuthorizationStatusUnDetermined) {
         self.pushNotificationPermissionCompletionHandler = completionHandler;
@@ -268,7 +257,7 @@ static ClusterPrePermissions *__sharedInstance;
                                              selector:@selector(applicationDidBecomeActive)
                                                  name:UIApplicationDidBecomeActiveNotification
                                                object:nil];
-
+    
     if ([[UIApplication sharedApplication] respondsToSelector:@selector(isRegisteredForRemoteNotifications)]) {
         // iOS8+
         UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationType)self.requestedPushNotificationTypes
@@ -330,10 +319,10 @@ static ClusterPrePermissions *__sharedInstance;
 {
     if (requestTitle.length == 0) {
         switch (mediaType) {
-            case ClusterAVAuthorizationTypeCamera:
+                case ClusterAVAuthorizationTypeCamera:
                 requestTitle = @"Access Camera?";
                 break;
-
+                
             default:
                 requestTitle = @"Access Microphone?";
                 break;
@@ -341,7 +330,7 @@ static ClusterPrePermissions *__sharedInstance;
     }
     denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
+    
     AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:[self AVEquivalentMediaType:mediaType]];
     if (status == AVAuthorizationStatusNotDetermined) {
         self.avPermissionCompletionHandler = completionHandler;
@@ -453,9 +442,9 @@ static ClusterPrePermissions *__sharedInstance;
     }
     denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
-    ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
-    if (status == ALAuthorizationStatusNotDetermined) {
+    
+    CLAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
+    if (status == kCLAuthorizationStatusNotDetermined) {
         self.photoPermissionCompletionHandler = completionHandler;
         self.prePhotoPermissionAlertView = [[UIAlertView alloc] initWithTitle:requestTitle
                                                                       message:message
@@ -465,7 +454,7 @@ static ClusterPrePermissions *__sharedInstance;
         [self.prePhotoPermissionAlertView show];
     } else {
         if (completionHandler) {
-            completionHandler((status == ALAuthorizationStatusAuthorized),
+            completionHandler((status == kCLAuthorizationStatusAuthorized),
                               ClusterDialogResultNoActionTaken,
                               ClusterDialogResultNoActionTaken);
         }
@@ -475,13 +464,7 @@ static ClusterPrePermissions *__sharedInstance;
 
 - (void) showActualPhotoPermissionAlert
 {
-    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-    [library enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-        // Got access! Show login
-        [self firePhotoPermissionCompletionHandler];
-        *stop = YES;
-    } failureBlock:^(NSError *error) {
-        // User denied access
+    [PHPhotoLibrary requestAuthorization: ^(PHAuthorizationStatus status){
         [self firePhotoPermissionCompletionHandler];
     }];
 }
@@ -489,24 +472,24 @@ static ClusterPrePermissions *__sharedInstance;
 
 - (void) firePhotoPermissionCompletionHandler
 {
-    ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
+    CLAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
     if (self.photoPermissionCompletionHandler) {
         ClusterDialogResult userDialogResult = ClusterDialogResultGranted;
         ClusterDialogResult systemDialogResult = ClusterDialogResultGranted;
-        if (status == ALAuthorizationStatusNotDetermined) {
+        if (status == kCLAuthorizationStatusNotDetermined) {
             userDialogResult = ClusterDialogResultDenied;
             systemDialogResult = ClusterDialogResultNoActionTaken;
-        } else if (status == ALAuthorizationStatusAuthorized) {
+        } else if (status == kCLAuthorizationStatusAuthorized) {
             userDialogResult = ClusterDialogResultGranted;
             systemDialogResult = ClusterDialogResultGranted;
-        } else if (status == ALAuthorizationStatusDenied) {
+        } else if (status == kCLAuthorizationStatusDenied) {
             userDialogResult = ClusterDialogResultGranted;
             systemDialogResult = ClusterDialogResultDenied;
-        } else if (status == ALAuthorizationStatusRestricted) {
+        } else if (status == kCLAuthorizationStatusRestricted) {
             userDialogResult = ClusterDialogResultGranted;
             systemDialogResult = ClusterDialogResultParentallyRestricted;
         }
-        self.photoPermissionCompletionHandler((status == ALAuthorizationStatusAuthorized),
+        self.photoPermissionCompletionHandler((status == kCLAuthorizationStatusAuthorized),
                                               userDialogResult,
                                               systemDialogResult);
         self.photoPermissionCompletionHandler = nil;
@@ -516,9 +499,9 @@ static ClusterPrePermissions *__sharedInstance;
 
 #pragma mark - Contact Permissions Help
 /*!
-* @discussion get the authorization status of accessing contacts. It handles both uses of Contacts framework iOS 9+ or AddressBook fremwork < iOS 9
-* @param ClusterContactsAuthorizationType
-*/
+ * @discussion get the authorization status of accessing contacts. It handles both uses of Contacts framework iOS 9+ or AddressBook fremwork < iOS 9
+ * @param ClusterContactsAuthorizationType
+ */
 -(ClusterContactsAuthorizationType)getContactsAuthorizationType{
     
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_9_0
@@ -630,10 +613,10 @@ static ClusterPrePermissions *__sharedInstance;
 {
     if (requestTitle.length == 0) {
         switch (eventType) {
-            case ClusterEventAuthorizationTypeEvent:
+                case ClusterEventAuthorizationTypeEvent:
                 requestTitle = @"Access Calendar?";
                 break;
-
+                
             default:
                 requestTitle = @"Access Reminders?";
                 break;
@@ -641,7 +624,7 @@ static ClusterPrePermissions *__sharedInstance;
     }
     denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
+    
     EKAuthorizationStatus status = [EKEventStore authorizationStatusForEntityType:[self EKEquivalentEventType:eventType]];
     if (status == EKAuthorizationStatusNotDetermined) {
         self.eventPermissionCompletionHandler = completionHandler;
@@ -738,7 +721,7 @@ static ClusterPrePermissions *__sharedInstance;
     }
     denyButtonTitle  = [self titleFor:ClusterTitleTypeDeny fromTitle:denyButtonTitle];
     grantButtonTitle = [self titleFor:ClusterTitleTypeRequest fromTitle:grantButtonTitle];
-
+    
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     if (status == kCLAuthorizationStatusNotDetermined) {
         self.locationPermissionCompletionHandler = completionHandler;
@@ -763,18 +746,18 @@ static ClusterPrePermissions *__sharedInstance;
 {
     self.locationManager = [[CLLocationManager alloc] init];
     self.locationManager.delegate = self;
-
+    
     if (self.locationAuthorizationType == ClusterLocationAuthorizationTypeAlways &&
         [self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
-
+        
         [self.locationManager requestAlwaysAuthorization];
-
+        
     } else if (self.locationAuthorizationType == ClusterLocationAuthorizationTypeWhenInUse &&
                [self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
-
+        
         [self.locationManager requestWhenInUseAuthorization];
     }
-
+    
     [self.locationManager startUpdatingLocation];
 }
 
@@ -837,7 +820,7 @@ static ClusterPrePermissions *__sharedInstance;
             // User granted access, now show the REAL permissions dialog
             [self showActualAVPermissionAlertWithType:alertView.tag];
         }
-
+        
         self.preAVPermissionAlertView = nil;
     } else if (alertView == self.prePhotoPermissionAlertView) {
         if (buttonIndex == alertView.cancelButtonIndex) {
@@ -847,7 +830,7 @@ static ClusterPrePermissions *__sharedInstance;
             // User granted access, now show the REAL permissions dialog
             [self showActualPhotoPermissionAlert];
         }
-
+        
         self.prePhotoPermissionAlertView = nil;
     } else if (alertView == self.preContactPermissionAlertView) {
         if (buttonIndex == alertView.cancelButtonIndex) {
@@ -889,10 +872,10 @@ static ClusterPrePermissions *__sharedInstance;
 - (NSString *)titleFor:(ClusterTitleType)titleType fromTitle:(NSString *)title
 {
     switch (titleType) {
-        case ClusterTitleTypeDeny:
+            case ClusterTitleTypeDeny:
             title = (title.length == 0) ? @"Not Now" : title;
             break;
-        case ClusterTitleTypeRequest:
+            case ClusterTitleTypeRequest:
             title = (title.length == 0) ? @"Give Access" : title;
             break;
         default:
@@ -903,3 +886,4 @@ static ClusterPrePermissions *__sharedInstance;
 }
 
 @end
+
